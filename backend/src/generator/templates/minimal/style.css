@@ -1,0 +1,144 @@
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #111;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 680px;
+  margin: 80px auto;
+  padding: 0 24px;
+}
+
+/* ---- Header ---- */
+.header {
+  margin-bottom: 56px;
+}
+
+.name {
+  font-size: 2.4rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.contact-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.contact-line a {
+  color: #555;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+}
+
+.contact-line a:hover {
+  color: #111;
+  border-color: #111;
+}
+
+/* ---- Sections ---- */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-heading {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #333;
+  max-width: 580px;
+}
+
+/* ---- Entries ---- */
+.entry {
+  margin-bottom: 28px;
+}
+
+.entry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.entry-primary {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.entry-secondary {
+  color: #555;
+  margin-left: 8px;
+}
+
+.entry-secondary::before {
+  content: '·';
+  margin-right: 8px;
+  color: #ccc;
+}
+
+.entry-date {
+  font-size: 0.85rem;
+  color: #999;
+  white-space: nowrap;
+}
+
+.entry-location {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 2px;
+}
+
+.entry-list {
+  margin-top: 8px;
+  padding-left: 18px;
+  color: #444;
+}
+
+.entry-list li {
+  margin-bottom: 4px;
+}
+
+.entry-list li::marker {
+  color: #ccc;
+}
+
+/* ---- Skills ---- */
+.skills-text {
+  color: #444;
+  line-height: 1.8;
+}
+
+/* ---- Print ---- */
+@media print {
+  .page { margin: 0; padding: 0; }
+  .name { font-size: 1.8rem; }
+}
+
+@media (max-width: 600px) {
+  .page { margin: 40px auto; }
+  .name { font-size: 1.8rem; }
+  .entry-row { flex-direction: column; gap: 2px; }
+}

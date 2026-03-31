@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>~{{name}}'s Homepage~</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-bar-text">{{name}}_resume.html</div>
+        <div class="title-bar-controls">
+          <span class="btn-ctrl">_</span>
+          <span class="btn-ctrl">□</span>
+          <span class="btn-ctrl btn-close">×</span>
+        </div>
+      </div>
+      <div class="window-body">
+
+        <div class="marquee-bar">
+          <span class="marquee-text">★ Welcome to {{name}}'s Personal Homepage ★ Last updated: 2024 ★</span>
+        </div>
+
+        <div class="hero-banner">
+          <h1 class="hero-name">{{name}}</h1>
+          <div class="hero-contact">
+            {{#if email}}<span>📧 {{email}}</span>{{/if}}
+            {{#if phone}}<span>📞 {{phone}}</span>{{/if}}
+            {{#if location}}<span>📍 {{location}}</span>{{/if}}
+            {{#if linkedin}}<span>🔗 <a href="https://{{linkedin}}" target="_blank" rel="noopener">LinkedIn</a></span>{{/if}}
+            {{#if website}}<span>🌐 <a href="{{website}}" target="_blank" rel="noopener">Website</a></span>{{/if}}
+          </div>
+        </div>
+
+        {{#if summary}}
+        <div class="panel">
+          <div class="panel-header">📋 About Me</div>
+          <div class="panel-body">
+            <p>{{summary}}</p>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if (hasItems experience)}}
+        <div class="panel">
+          <div class="panel-header">💼 Work Experience</div>
+          <div class="panel-body">
+            {{#each experience}}
+            <div class="retro-entry">
+              <div class="retro-entry-header">
+                <span class="retro-bullet">▶</span>
+                <strong>{{title}}</strong> @ {{company}}
+                <span class="retro-date">[{{dateRange startDate endDate}}]</span>
+              </div>
+              {{#if location}}<div class="retro-loc">📍 {{location}}</div>{{/if}}
+              {{#if (hasItems bullets)}}
+              <ul class="retro-list">
+                {{#each bullets}}<li>{{this}}</li>{{/each}}
+              </ul>
+              {{/if}}
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if (hasItems education)}}
+        <div class="panel">
+          <div class="panel-header">🎓 Education</div>
+          <div class="panel-body">
+            {{#each education}}
+            <div class="retro-entry">
+              <div class="retro-entry-header">
+                <span class="retro-bullet">▶</span>
+                <strong>{{institution}}</strong>
+                {{#if startDate}}<span class="retro-date">[{{dateRange startDate endDate}}]</span>{{/if}}
+              </div>
+              {{#if degree}}<div class="retro-detail">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
+              {{#if gpa}}<div class="retro-detail">GPA: {{gpa}}</div>{{/if}}
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if (hasItems skills)}}
+        <div class="panel">
+          <div class="panel-header">🛠️ Skills</div>
+          <div class="panel-body">
+            <div class="retro-skills">
+              {{#each skills}}<span class="retro-skill">{{this}}</span>{{/each}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+
+        <div class="footer-bar">
+          <span>🔧 Best viewed in any browser</span>
+          <span>⭐ You are visitor #{{visitorCount}}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

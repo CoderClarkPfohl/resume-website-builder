@@ -1,0 +1,13 @@
+{
+  "name": "resume-website-builder",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"backend,frontend\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix backend\" \"npm start --prefix frontend\"",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

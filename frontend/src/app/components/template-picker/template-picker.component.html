@@ -1,0 +1,39 @@
+<div class="picker">
+  <h2 class="picker-title">Choose a Template</h2>
+  <p class="picker-subtitle">Pick a style for your resume website.</p>
+
+  <div class="template-grid">
+    @for (tmpl of templates; track tmpl.id) {
+      <button
+        class="template-card"
+        [class.selected]="selectedId === tmpl.id"
+        (click)="select(tmpl.id)"
+        type="button"
+      >
+        <div class="template-preview" [attr.data-template]="tmpl.id">
+          <div class="preview-inner"></div>
+        </div>
+        <div class="template-info">
+          <span class="template-name">{{ tmpl.name }}</span>
+          <span class="template-desc">{{ tmpl.description }}</span>
+        </div>
+        @if (selectedId === tmpl.id) {
+          <span class="check-badge">✓</span>
+        }
+      </button>
+    }
+  </div>
+
+  <button
+    class="btn-generate"
+    [disabled]="!selectedId || loading"
+    (click)="generate()"
+    type="button"
+  >
+    @if (loading) {
+      <span class="spinner"></span> Generating…
+    } @else {
+      Generate My Site →
+    }
+  </button>
+</div>

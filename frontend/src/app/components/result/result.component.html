@@ -1,0 +1,85 @@
+<div class="result">
+  <div class="success-icon">🎉</div>
+  <h2 class="result-title">Your Resume Site is Ready!</h2>
+  <p class="result-subtitle">Share the link below or preview it in the frame.</p>
+
+  <div class="url-row">
+    <a class="site-url" [href]="siteUrl" target="_blank" rel="noopener">{{ siteUrl }}</a>
+    <button class="btn-copy" (click)="copyUrl()" type="button">
+      {{ copied ? '✓ Copied' : 'Copy' }}
+    </button>
+  </div>
+
+  <div class="browser-chrome">
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="browser-address">{{ siteUrl }}</div>
+    </div>
+    <div class="preview-frame-wrapper">
+      <iframe
+        class="preview-frame"
+        [src]="safeUrl"
+        title="Resume site preview"
+        sandbox="allow-same-origin allow-scripts"
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- Deploy section -->
+  <div class="deploy-section">
+    @if (!repoUrl) {
+      <h3 class="deploy-title">Deploy to the Web</h3>
+      <p class="deploy-subtitle">Create a GitHub repo and deploy to Netlify in one click.</p>
+      <div class="deploy-form">
+        <input
+          type="text"
+          class="deploy-input"
+          placeholder="repo-name (e.g. my-resume)"
+          [(ngModel)]="repoName"
+          [disabled]="deploying"
+        />
+        <button
+          class="btn-deploy"
+          (click)="deploy()"
+          [disabled]="!repoName.trim() || deploying"
+          type="button"
+        >
+          @if (deploying) {
+            <span class="spinner"></span> Deploying…
+          } @else {
+            🚀 Deploy
+          }
+        </button>
+      </div>
+      @if (deployError) {
+        <p class="deploy-error">{{ deployError }}</p>
+      }
+    } @else {
+      <div class="deploy-success">
+        <h3 class="deploy-title">🎉 Deployed!</h3>
+        <div class="deploy-links">
+          @if (repoUrl) {
+            <div class="deploy-link-row">
+              <span class="deploy-label">GitHub</span>
+              <a [href]="repoUrl" target="_blank" rel="noopener">{{ repoUrl }}</a>
+            </div>
+          }
+          @if (netlifyUrl) {
+            <div class="deploy-link-row">
+              <span class="deploy-label">Live Site</span>
+              <a [href]="netlifyUrl" target="_blank" rel="noopener">{{ netlifyUrl }}</a>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <button class="btn-restart" (click)="startOver.emit()" type="button">
+    ← Upload Another Resume
+  </button>
+</div>

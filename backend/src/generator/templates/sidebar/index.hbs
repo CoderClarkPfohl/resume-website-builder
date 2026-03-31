@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{name}} — Resume</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <aside class="side">
+      <div class="side-inner">
+        <div class="avatar">{{name.[0]}}</div>
+        <h1 class="side-name">{{name}}</h1>
+
+        <nav class="side-nav">
+          {{#if summary}}<a href="#about">About</a>{{/if}}
+          {{#if (hasItems experience)}}<a href="#experience">Experience</a>{{/if}}
+          {{#if (hasItems education)}}<a href="#education">Education</a>{{/if}}
+          {{#if (hasItems skills)}}<a href="#skills">Skills</a>{{/if}}
+        </nav>
+
+        <div class="side-contact">
+          {{#if email}}<div class="side-item"><span class="side-label">Email</span><a href="mailto:{{email}}">{{email}}</a></div>{{/if}}
+          {{#if phone}}<div class="side-item"><span class="side-label">Phone</span><span>{{phone}}</span></div>{{/if}}
+          {{#if location}}<div class="side-item"><span class="side-label">Location</span><span>{{location}}</span></div>{{/if}}
+          {{#if linkedin}}<div class="side-item"><span class="side-label">LinkedIn</span><a href="https://{{linkedin}}" target="_blank" rel="noopener">Profile</a></div>{{/if}}
+          {{#if website}}<div class="side-item"><span class="side-label">Website</span><a href="{{website}}" target="_blank" rel="noopener">Visit</a></div>{{/if}}
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+
+      {{#if summary}}
+      <section id="about" class="sect">
+        <h2 class="sect-title">About</h2>
+        <p class="about-text">{{summary}}</p>
+      </section>
+      {{/if}}
+
+      {{#if (hasItems experience)}}
+      <section id="experience" class="sect">
+        <h2 class="sect-title">Experience</h2>
+        {{#each experience}}
+        <div class="exp-card">
+          <div class="exp-top">
+            <div>
+              <div class="exp-role">{{title}}</div>
+              <div class="exp-company">{{company}}{{#if location}} · {{location}}{{/if}}</div>
+            </div>
+            <div class="exp-date">{{dateRange startDate endDate}}</div>
+          </div>
+          {{#if (hasItems bullets)}}
+          <ul class="exp-bullets">
+            {{#each bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
+        </div>
+        {{/each}}
+      </section>
+      {{/if}}
+
+      {{#if (hasItems education)}}
+      <section id="education" class="sect">
+        <h2 class="sect-title">Education</h2>
+        {{#each education}}
+        <div class="edu-row">
+          <div>
+            <div class="edu-inst">{{institution}}</div>
+            {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
+            {{#if gpa}}<div class="edu-meta">GPA: {{gpa}}</div>{{/if}}
+          </div>
+          {{#if startDate}}<div class="edu-date">{{dateRange startDate endDate}}</div>{{/if}}
+        </div>
+        {{/each}}
+      </section>
+      {{/if}}
+
+      {{#if (hasItems skills)}}
+      <section id="skills" class="sect">
+        <h2 class="sect-title">Skills</h2>
+        <div class="skill-bars">
+          {{#each skills}}<span class="skill-bar">{{this}}</span>{{/each}}
+        </div>
+      </section>
+      {{/if}}
+
+    </main>
+  </div>
+</body>
+</html>

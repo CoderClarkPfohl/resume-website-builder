@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# Generated resume sites
+backend/sites/*
+!backend/sites/.gitkeep
+
+# Angular build output
+frontend/dist/
+frontend/.angular/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

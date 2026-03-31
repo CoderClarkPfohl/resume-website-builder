@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{name}} — Resume</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <header class="hero">
+      <h1 class="hero-name">{{name}}</h1>
+      <div class="hero-contact">
+        {{#if email}}<a href="mailto:{{email}}">{{email}}</a>{{/if}}
+        {{#if phone}}<span>{{phone}}</span>{{/if}}
+        {{#if location}}<span>{{location}}</span>{{/if}}
+        {{#if linkedin}}<a href="https://{{linkedin}}" target="_blank" rel="noopener">LinkedIn</a>{{/if}}
+        {{#if website}}<a href="{{website}}" target="_blank" rel="noopener">Portfolio</a>{{/if}}
+      </div>
+      {{#if summary}}
+      <p class="hero-summary">{{summary}}</p>
+      {{/if}}
+    </header>
+
+    {{#if (hasItems experience)}}
+    <section class="section">
+      <h2 class="section-title">Experience</h2>
+      <div class="timeline">
+        {{#each experience}}
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <div>
+                <div class="timeline-role">{{title}}</div>
+                <div class="timeline-company">{{company}}{{#if location}} · {{location}}{{/if}}</div>
+              </div>
+              <span class="timeline-date">{{dateRange startDate endDate}}</span>
+            </div>
+            {{#if (hasItems bullets)}}
+            <ul class="timeline-bullets">
+              {{#each bullets}}<li>{{this}}</li>{{/each}}
+            </ul>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if (hasItems education)}}
+    <section class="section">
+      <h2 class="section-title">Education</h2>
+      {{#each education}}
+      <div class="edu-row">
+        <div>
+          <div class="edu-inst">{{institution}}</div>
+          {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
+          {{#if gpa}}<div class="edu-gpa">GPA: {{gpa}}</div>{{/if}}
+        </div>
+        {{#if startDate}}<span class="edu-date">{{dateRange startDate endDate}}</span>{{/if}}
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{#if (hasItems skills)}}
+    <section class="section">
+      <h2 class="section-title">Skills</h2>
+      <div class="skill-tags">
+        {{#each skills}}<span class="skill-tag">{{this}}</span>{{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+  </div>
+</body>
+</html>

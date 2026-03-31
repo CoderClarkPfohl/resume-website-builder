@@ -1,0 +1,163 @@
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+body {
+  font-family: 'Source Sans 3', 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #1a1a1a;
+  background: #faf9f6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: #1a1a1a; text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: #c0392b; }
+
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+/* ---- Masthead ---- */
+.masthead {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.dateline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c0392b;
+  margin-bottom: 16px;
+}
+
+.masthead-name {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.masthead-rule {
+  width: 60px;
+  height: 3px;
+  background: #1a1a1a;
+  margin: 0 auto 20px;
+}
+
+.masthead-contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 24px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.masthead-contact span::before {
+  content: none;
+}
+
+/* ---- Lede ---- */
+.lede {
+  font-size: 1.2rem;
+  line-height: 1.75;
+  font-weight: 300;
+  color: #333;
+  text-align: center;
+  max-width: 580px;
+  margin: 0 auto 56px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 28px 0;
+}
+
+/* ---- Sections ---- */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-head {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Story blocks ---- */
+.story {
+  margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #eee;
+}
+
+.story:last-child { border-bottom: none; padding-bottom: 0; }
+
+.story-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c0392b;
+  margin-bottom: 6px;
+}
+
+.story-headline {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.story-byline {
+  font-size: 0.95rem;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.story-note {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.story-body {
+  padding-left: 20px;
+  color: #333;
+}
+
+.story-body li {
+  margin-bottom: 6px;
+}
+
+/* ---- Skills ---- */
+.skills-prose {
+  font-size: 1.05rem;
+  line-height: 2;
+  color: #444;
+  letter-spacing: 0.01em;
+}
+
+/* ---- Footer ---- */
+.colophon {
+  margin-top: 40px;
+}
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; }
+  .page { padding: 0; }
+  .masthead-name { font-size: 2.4rem; }
+}
+
+@media (max-width: 600px) {
+  .masthead-name { font-size: 2.2rem; }
+  .section-head { font-size: 1.4rem; }
+  .lede { font-size: 1.05rem; }
+}

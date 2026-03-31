@@ -1,0 +1,204 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  background: #e2e8f0;
+  color: #2d3748;
+  line-height: 1.6;
+  padding: 40px 20px;
+}
+
+.resume {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: auto 1fr;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  min-height: 1000px;
+}
+
+/* Sidebar */
+.sidebar {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 40px 28px;
+  grid-row: 1 / -1;
+}
+
+.sidebar-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+
+.sidebar-divider {
+  width: 40px;
+  height: 3px;
+  background: #4299e1;
+  margin: 12px 0 20px;
+  border: none;
+}
+
+/* Contact in sidebar */
+.sidebar-contact { margin-bottom: 28px; }
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #cbd5e0;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.contact-item .icon {
+  flex-shrink: 0;
+  width: 16px;
+  font-style: normal;
+  color: #4299e1;
+}
+
+.contact-item a { color: #90cdf4; text-decoration: none; }
+.contact-item a:hover { text-decoration: underline; }
+
+/* Skills in sidebar */
+.sidebar-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0aec0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #4a5568;
+  padding-bottom: 6px;
+}
+
+.skills-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-chip {
+  background: #4a5568;
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid #718096;
+}
+
+/* Main content */
+.main {
+  background: #f7fafc;
+  padding: 40px 36px;
+}
+
+/* Sections */
+.section { margin-bottom: 32px; }
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4299e1;
+  border-left: 4px solid #4299e1;
+  padding-left: 10px;
+  margin-bottom: 16px;
+}
+
+/* Summary */
+.summary p { font-size: 0.95rem; color: #4a5568; line-height: 1.7; }
+
+/* Experience */
+.job { margin-bottom: 22px; }
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.job-company {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #2d3748;
+}
+
+.job-dates {
+  font-size: 0.8rem;
+  color: #718096;
+  font-style: italic;
+}
+
+.job-title {
+  font-size: 0.9rem;
+  color: #4299e1;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.job-location {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-bottom: 6px;
+}
+
+.job-bullets {
+  list-style: none;
+  padding-left: 0;
+  font-size: 0.88rem;
+  color: #4a5568;
+}
+
+.job-bullets li {
+  padding-left: 16px;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.job-bullets li::before {
+  content: '▪';
+  position: absolute;
+  left: 0;
+  color: #4299e1;
+  font-size: 0.7rem;
+  top: 3px;
+}
+
+/* Education */
+.edu-item { margin-bottom: 16px; }
+
+.edu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.edu-institution { font-weight: 700; font-size: 0.95rem; color: #2d3748; }
+.edu-dates { font-size: 0.8rem; color: #718096; font-style: italic; }
+.edu-degree { font-size: 0.88rem; color: #4a5568; margin-top: 2px; }
+.edu-gpa { font-size: 0.8rem; color: #a0aec0; margin-top: 2px; }
+
+@media print {
+  body { background: white; padding: 0; }
+  .resume { box-shadow: none; grid-template-columns: 220px 1fr; }
+  .sidebar { background: #2d3748 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+@media (max-width: 650px) {
+  .resume { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .sidebar { grid-row: auto; }
+  .main { padding: 24px 20px; }
+}

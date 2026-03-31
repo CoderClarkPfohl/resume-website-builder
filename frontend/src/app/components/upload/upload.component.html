@@ -1,0 +1,76 @@
+<div class="page">
+  <header class="app-header">
+    <div class="logo">ResumeToSite</div>
+  </header>
+
+  <main class="app-main" [class.wide]="state === 'done'">
+
+    <!-- IDLE: drop zone -->
+    @if (state === 'idle') {
+      <div class="drop-zone-wrapper">
+        <h1 class="hero-title">Turn Your Resume Into a Website</h1>
+        <p class="hero-sub">Upload a PDF or Word document and we'll generate a polished resume site in seconds.</p>
+
+        <label
+          class="drop-zone"
+          [class.drag-over]="dragOver"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event)"
+        >
+          <input
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            class="file-input"
+            (change)="onFileInput($event)"
+          />
+          <div class="drop-icon">📄</div>
+          <div class="drop-text">
+            <strong>Drop your resume here</strong>
+            <span>or click to browse</span>
+          </div>
+          <div class="drop-hint">Supports PDF and DOCX · Max 10 MB</div>
+        </label>
+      </div>
+    }
+
+    <!-- PARSING spinner -->
+    @if (state === 'parsing') {
+      <div class="spinner-view">
+        <div class="big-spinner"></div>
+        <p>Parsing your resume…</p>
+      </div>
+    }
+
+    <!-- TEMPLATE SELECT -->
+    @if (state === 'template-select') {
+      <app-template-picker
+        [loading]="isGenerating"
+        (templateSelected)="onTemplateSelected($event)"
+      />
+    }
+
+    <!-- GENERATING spinner -->
+    @if (state === 'generating') {
+      <div class="spinner-view">
+        <div class="big-spinner"></div>
+        <p>Building your site…</p>
+      </div>
+    }
+
+    <!-- DONE -->
+    @if (state === 'done') {
+      <app-result [siteId]="siteId" [siteUrl]="siteUrl" (startOver)="reset()" />
+    }
+
+    <!-- ERROR -->
+    @if (state === 'error') {
+      <div class="error-view">
+        <div class="error-icon">⚠️</div>
+        <p class="error-message">{{ errorMessage }}</p>
+        <button class="btn-retry" (click)="reset()" type="button">Try Again</button>
+      </div>
+    }
+
+  </main>
+</div>

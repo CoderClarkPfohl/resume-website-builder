@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{name}} — Resume</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="resume">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-name">{{name}}</div>
+      <hr class="sidebar-divider" />
+
+      <div class="sidebar-contact">
+        {{#if email}}
+        <div class="contact-item">
+          <i class="icon">✉</i>
+          <a href="mailto:{{email}}">{{email}}</a>
+        </div>
+        {{/if}}
+        {{#if phone}}
+        <div class="contact-item">
+          <i class="icon">☎</i>
+          <span>{{phone}}</span>
+        </div>
+        {{/if}}
+        {{#if location}}
+        <div class="contact-item">
+          <i class="icon">⌖</i>
+          <span>{{location}}</span>
+        </div>
+        {{/if}}
+        {{#if linkedin}}
+        <div class="contact-item">
+          <i class="icon">in</i>
+          <a href="https://{{linkedin}}" target="_blank" rel="noopener">{{linkedin}}</a>
+        </div>
+        {{/if}}
+        {{#if website}}
+        <div class="contact-item">
+          <i class="icon">⌘</i>
+          <a href="{{website}}" target="_blank" rel="noopener">{{website}}</a>
+        </div>
+        {{/if}}
+      </div>
+
+      {{#if (hasItems skills)}}
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Skills</div>
+        <div class="skills-chips">
+          {{#each skills}}<span class="skill-chip">{{this}}</span>{{/each}}
+        </div>
+      </div>
+      {{/if}}
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+
+      {{#if summary}}
+      <section class="section summary">
+        <h2 class="section-title">About</h2>
+        <p>{{summary}}</p>
+      </section>
+      {{/if}}
+
+      {{#if (hasItems experience)}}
+      <section class="section">
+        <h2 class="section-title">Experience</h2>
+        {{#each experience}}
+        <div class="job">
+          <div class="job-header">
+            <span class="job-company">{{company}}</span>
+            <span class="job-dates">{{dateRange startDate endDate}}</span>
+          </div>
+          {{#if title}}<div class="job-title">{{title}}</div>{{/if}}
+          {{#if location}}<div class="job-location">{{location}}</div>{{/if}}
+          {{#if (hasItems bullets)}}
+          <ul class="job-bullets">
+            {{#each bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
+        </div>
+        {{/each}}
+      </section>
+      {{/if}}
+
+      {{#if (hasItems education)}}
+      <section class="section">
+        <h2 class="section-title">Education</h2>
+        {{#each education}}
+        <div class="edu-item">
+          <div class="edu-header">
+            <span class="edu-institution">{{institution}}</span>
+            {{#if startDate}}<span class="edu-dates">{{dateRange startDate endDate}}</span>{{/if}}
+          </div>
+          {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
+          {{#if gpa}}<div class="edu-gpa">GPA: {{gpa}}</div>{{/if}}
+        </div>
+        {{/each}}
+      </section>
+      {{/if}}
+
+    </main>
+  </div>
+</body>
+</html>

@@ -3,6 +3,7 @@
   animation: fadeIn 0.3s ease;
   max-width: 1060px;
   margin: 0 auto;
+  padding-bottom: 100px;
 }
 
 .picker-title {
@@ -330,18 +331,28 @@ details[open] .category-dimmed:first-of-type {
 
 /* ---- Continue button ---- */
 .btn-continue {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
   background: #4299e1;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 14px 36px;
+  border-radius: 10px;
+  padding: 16px 40px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 20px rgba(66, 153, 225, 0.45);
+  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
+  white-space: nowrap;
 
-  &:hover:not(:disabled) { background: #3182ce; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) {
+    background: #3182ce;
+    box-shadow: 0 6px 28px rgba(66, 153, 225, 0.55);
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }

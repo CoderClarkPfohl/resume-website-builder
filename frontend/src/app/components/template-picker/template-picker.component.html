@@ -24,18 +24,78 @@
     }
   </div>
 
-  <button
-    class="btn-generate"
-    [disabled]="!selectedId || loading"
-    (click)="generate()"
-    type="button"
-  >
+  <!-- Config panel -->
+  <div class="config-panel">
+    <div class="config-row">
+      <span class="config-label">Accent Color</span>
+      <div class="accent-swatches">
+        @for (preset of ACCENT_PRESETS; track preset.value) {
+          <button
+            class="swatch"
+            [class.swatch-active]="(config.accentColor ?? '') === preset.value"
+            [style.background]="preset.value || '#e5e7eb'"
+            [title]="preset.label"
+            (click)="setAccent(preset.value)"
+            type="button"
+          ></button>
+        }
+        <label class="swatch swatch-custom" title="Custom color">
+          <input
+            type="color"
+            class="color-input"
+            [value]="config.accentColor || '#4299e1'"
+            (input)="setAccent($any($event.target).value)"
+          />
+          <span class="swatch-plus">+</span>
+        </label>
+      </div>
+    </div>
+    <div class="config-row">
+      <span class="config-label">Font</span>
+      <select
+        class="font-select"
+        [ngModel]="config.fontFamily ?? ''"
+        (ngModelChange)="setFont($event)"
+      >
+        @for (font of FONT_PRESETS; track font.value) {
+          <option [value]="font.value">{{ font.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="config-row">
+      <span class="config-label">Density</span>
+      <div class="density-toggle">
+        <button
+          class="density-btn"
+          [class.active]="config.density !== 'compact'"
+          (click)="config.density = 'normal'"
+          type="button"
+        >Normal</button>
+        <button
+          class="density-btn"
+          [class.active]="config.density === 'compact'"
+          (click)="config.density = 'compact'"
+          type="button"
+        >Compact</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="picker-actions">
+    <button class="btn-back" (click)="back.emit()" type="button">← Back to Editor</button>
+    <button
+      class="btn-generate"
+      [disabled]="!selectedId || loading"
+      (click)="generate()"
+      type="button"
+    >
     @if (loading) {
       <span class="spinner"></span> Generating…
     } @else {
       Generate My Site →
     }
   </button>
+  </div>
 </div>
 
 <!-- Backdrop -->
@@ -57,7 +117,13 @@
   </div>
 
   <div class="drawer-iframe-wrap">
-    @if (drawerOpen && previewUrl) {
+    @if (previewLoading) {
+      <div class="preview-spinner-wrap">
+        <div class="preview-spinner"></div>
+        <span>Loading preview…</span>
+      </div>
+    }
+    @if (drawerOpen && !previewLoading) {
       <iframe
         class="preview-iframe"
         [src]="previewUrl"

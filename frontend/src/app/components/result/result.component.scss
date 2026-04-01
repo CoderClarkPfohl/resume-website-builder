@@ -61,6 +61,23 @@
   &:hover { background: #3182ce; }
 }
 
+.btn-download {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover { background: #059669; }
+}
+
 /* ---- Browser chrome mockup ---- */
 .browser-chrome {
   border: 1px solid #d1d5db;
@@ -243,6 +260,26 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   display: inline-block;
+}
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-change-template {
+  background: transparent;
+  border: 1px solid #4299e1;
+  color: #4299e1;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: #4299e1; color: #fff; }
 }
 
 .btn-restart {

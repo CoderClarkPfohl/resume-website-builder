@@ -3,6 +3,31 @@
     <div class="logo">ResumeToSite</div>
   </header>
 
+  <!-- Step indicator -->
+  @if (showSteps) {
+    <nav class="step-bar">
+      @for (step of steps; track step.key; let i = $index) {
+        <div
+          class="step"
+          [class.step-active]="i === currentStep"
+          [class.step-done]="i < currentStep"
+        >
+          <div class="step-dot">
+            @if (i < currentStep) {
+              <span class="step-check">✓</span>
+            } @else {
+              <span class="step-num">{{ i + 1 }}</span>
+            }
+          </div>
+          <span class="step-label">{{ step.label }}</span>
+        </div>
+        @if (i < steps.length - 1) {
+          <div class="step-line" [class.step-line-done]="i < currentStep"></div>
+        }
+      }
+    </nav>
+  }
+
   <main class="app-main" [class.wide]="state === 'done'">
 
     <!-- IDLE: drop zone -->
@@ -64,7 +89,10 @@
     @if (state === 'template-select') {
       <app-template-picker
         [loading]="isGenerating"
+        [parsedResume]="parsedResume"
+        [enabledSections]="enabledSections"
         (templateSelected)="onTemplateSelected($event)"
+        (back)="onTemplateBack()"
       />
     }
 
@@ -78,7 +106,7 @@
 
     <!-- DONE -->
     @if (state === 'done') {
-      <app-result [siteId]="siteId" [siteUrl]="siteUrl" (startOver)="reset()" />
+      <app-result [siteId]="siteId" [siteUrl]="siteUrl" (startOver)="reset()" (changeTemplate)="onChangeTemplate()" />
     }
 
     <!-- ERROR -->

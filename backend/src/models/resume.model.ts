@@ -52,10 +52,17 @@ export interface UploadResponse {
   parsed: ParsedResume;
 }
 
+export interface TemplateConfig {
+  accentColor?: string;   // hex, e.g. "#2563eb"
+  density?: 'normal' | 'compact';
+  fontFamily?: string;    // Google Font name, e.g. "Inter"
+}
+
 export interface GenerateRequest {
   parsed: ParsedResume;
   templateId: string;
   enabledSections: string[];
+  config?: TemplateConfig;
 }
 
 export interface GenerateResponse {

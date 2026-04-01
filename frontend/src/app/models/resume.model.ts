@@ -63,6 +63,12 @@ export interface DeployResponse {
   warning?: string;
 }
 
+export interface TemplateConfig {
+  accentColor?: string;
+  density?: 'normal' | 'compact';
+  fontFamily?: string;
+}
+
 export interface TemplateMetadata {
   id: string;
   name: string;

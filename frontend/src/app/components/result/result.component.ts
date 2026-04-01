@@ -27,6 +27,7 @@ export class ResultComponent {
   get siteUrl() { return this._siteUrl; }
 
   @Output() startOver = new EventEmitter<void>();
+  @Output() changeTemplate = new EventEmitter<void>();
 
   copied = false;
   repoName = '';
@@ -34,6 +35,10 @@ export class ResultComponent {
   deployError = '';
   repoUrl = '';
   netlifyUrl = '';
+
+  get downloadUrl(): string {
+    return this.resumeService.getDownloadUrl(this.siteId);
+  }
 
   copyUrl() {
     navigator.clipboard.writeText(this.siteUrl).then(() => {

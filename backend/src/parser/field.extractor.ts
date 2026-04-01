@@ -4,6 +4,7 @@ const PHONE_RE = /(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}/;
 // Comma-separated phone (from PDF linearization: "812, 430, 6067")
 const PHONE_COMMA_RE = /\b(\d{3}),\s*(\d{3}),\s*(\d{4})\b/;
 const LINKEDIN_RE = /linkedin\.com\/in\/([\w-]+)/i;
+const GITHUB_RE = /github\.com\/([\w-]+)/i;
 const WEBSITE_RE = /https?:\/\/[\w.-]+\.[a-zA-Z]{2,}[\w./?=#%-]*/i;
 const NAME_INVALID_RE = /[@\d()\\/{}[\]]/;
 
@@ -12,6 +13,7 @@ export interface ContactFields {
   email: string;
   phone: string;
   linkedin?: string;
+  github?: string;
   website?: string;
   location?: string;
 }
@@ -21,6 +23,7 @@ export function extractContactFields(headerLines: string[]): ContactFields {
   let email = '';
   let phone = '';
   let linkedin: string | undefined;
+  let github: string | undefined;
   let website: string | undefined;
   let location: string | undefined;
 
@@ -48,10 +51,14 @@ export function extractContactFields(headerLines: string[]): ContactFields {
     const match = joinedBlob.match(LINKEDIN_RE);
     if (match) linkedin = `linkedin.com/in/${match[1]}`;
   }
+  if (!github) {
+    const match = joinedBlob.match(GITHUB_RE);
+    if (match) github = `github.com/${match[1]}`;
+  }
   if (!website) {
     const urlMatches = [...joinedBlob.matchAll(new RegExp(WEBSITE_RE.source, 'gi'))];
-    const nonLinkedin = urlMatches.find((m) => !LINKEDIN_RE.test(m[0]));
-    if (nonLinkedin) website = nonLinkedin[0];
+    const nonLinkedinOrGithub = urlMatches.find((m) => !LINKEDIN_RE.test(m[0]) && !GITHUB_RE.test(m[0]));
+    if (nonLinkedinOrGithub) website = nonLinkedinOrGithub[0];
   }
 
   // Then scan line-by-line to fill anything still missing
@@ -78,7 +85,12 @@ export function extractContactFields(headerLines: string[]): ContactFields {
       if (match) linkedin = `linkedin.com/in/${match[1]}`;
     }
 
-    if (!website && !LINKEDIN_RE.test(trimmed)) {
+    if (!github) {
+      const match = trimmed.match(GITHUB_RE);
+      if (match) github = `github.com/${match[1]}`;
+    }
+
+    if (!website && !LINKEDIN_RE.test(trimmed) && !GITHUB_RE.test(trimmed)) {
       const match = trimmed.match(WEBSITE_RE);
       if (match) website = match[0];
     }
@@ -93,8 +105,9 @@ export function extractContactFields(headerLines: string[]): ContactFields {
     if (PHONE_RE.test(trimmed) || PHONE_COMMA_RE.test(trimmed)) continue;
     if (WEBSITE_RE.test(trimmed)) continue;
     if (NAME_INVALID_RE.test(trimmed)) continue;
-    // Should be mostly letters, spaces, hyphens, periods, apostrophes
-    if (/^[A-Za-z\s\-.']+$/.test(trimmed) && trimmed.split(/\s+/).length >= 2) {
+    // Letters, spaces, hyphens, periods, apostrophes, commas (for suffixes like "Doe, Jr.")
+    // Require at least one space so lone words (like section labels) don't match
+    if (/^[A-Za-z\s\-.',]+$/.test(trimmed) && /\s/.test(trimmed)) {
       name = trimmed;
       break;
     }
@@ -110,7 +123,7 @@ export function extractContactFields(headerLines: string[]): ContactFields {
     }
   }
 
-  return { name, email, phone, linkedin, website, location };
+  return { name, email, phone, linkedin, github, website, location };
 }
 
 // Date range extraction helpers used by experience parser

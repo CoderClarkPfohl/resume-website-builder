@@ -341,6 +341,8 @@ export function parseResume(rawText: string): ParsedResume {
 
   const contactFields = extractContactFields([
     ...sectionMap.header,
+    // 'other' lines near the top are often contact info misclassified before fix propagated
+    ...sectionMap.other.slice(0, 10),
     ...sectionMap.summary.slice(0, 5),
   ]);
 
@@ -449,6 +451,7 @@ export function parseResume(rawText: string): ParsedResume {
     phone: contactFields.phone,
     location: contactFields.location,
     linkedin: contactFields.linkedin,
+    github: contactFields.github,
     website: contactFields.website,
     summary,
     experience,

@@ -7,6 +7,7 @@ import {
   DeployResponse,
   ParsedResume,
   TemplateMetadata,
+  TemplateConfig,
 } from '../models/resume.model';
 
 @Injectable({ providedIn: 'root' })
@@ -22,12 +23,25 @@ export class ResumeService {
   generateSite(
     parsed: ParsedResume,
     templateId: string,
-    enabledSections: string[]
+    enabledSections: string[],
+    config: TemplateConfig = {}
   ): Observable<GenerateResponse> {
     return this.http.post<GenerateResponse>('/api/generate', {
       parsed,
       templateId,
       enabledSections,
+      config,
+    });
+  }
+
+  previewSite(
+    parsed: ParsedResume,
+    templateId: string,
+    enabledSections: string[],
+    config: TemplateConfig = {}
+  ): Observable<string> {
+    return this.http.post('/api/preview', { parsed, templateId, enabledSections, config }, {
+      responseType: 'text',
     });
   }
 
@@ -37,5 +51,9 @@ export class ResumeService {
 
   deploySite(siteId: string, repoName: string): Observable<DeployResponse> {
     return this.http.post<DeployResponse>('/api/deploy', { siteId, repoName });
+  }
+
+  getDownloadUrl(siteId: string): string {
+    return `/api/download/${siteId}`;
   }
 }

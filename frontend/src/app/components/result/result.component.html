@@ -8,6 +8,9 @@
     <button class="btn-copy" (click)="copyUrl()" type="button">
       {{ copied ? '✓ Copied' : 'Copy' }}
     </button>
+    <a class="btn-download" [href]="downloadUrl" download="resume-site.zip">
+      Download ZIP
+    </a>
   </div>
 
   <div class="browser-chrome">
@@ -79,7 +82,12 @@
     }
   </div>
 
-  <button class="btn-restart" (click)="startOver.emit()" type="button">
-    ← Upload Another Resume
-  </button>
+  <div class="result-actions">
+    <button class="btn-change-template" (click)="changeTemplate.emit()" type="button">
+      ← Change Template
+    </button>
+    <button class="btn-restart" (click)="startOver.emit()" type="button">
+      ↺ Upload Another Resume
+    </button>
+  </div>
 </div>

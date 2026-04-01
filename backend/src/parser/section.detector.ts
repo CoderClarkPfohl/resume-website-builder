@@ -224,7 +224,10 @@ function detectSectionHeader(line: string): SectionName | null {
     }
   }
 
-  // Also treat all-caps short lines as section headers
+  // Also treat all-caps short lines as section headers — but ONLY for known patterns.
+  // Unknown all-caps lines (e.g. "JOHN DOE") must return null so they stay in the current
+  // section (usually 'header') rather than spawning a spurious 'other' section that swallows
+  // the phone/email lines that follow the name.
   const isAllCaps = trimmed === trimmed.toUpperCase();
   const isShort = trimmed.length <= 50;
   const hasNoSentenceEnd = !/[.!?]/.test(trimmed);
@@ -235,7 +238,8 @@ function detectSectionHeader(line: string): SectionName | null {
         return name;
       }
     }
-    return 'other';
+    // Not a recognised section — treat as content, not a section boundary.
+    return null;
   }
 
   return null;

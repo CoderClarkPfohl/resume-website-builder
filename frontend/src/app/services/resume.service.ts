@@ -19,8 +19,16 @@ export class ResumeService {
     return this.http.post<UploadResponse>('/api/upload', formData);
   }
 
-  generateSite(parsed: ParsedResume, templateId: string): Observable<GenerateResponse> {
-    return this.http.post<GenerateResponse>('/api/generate', { parsed, templateId });
+  generateSite(
+    parsed: ParsedResume,
+    templateId: string,
+    enabledSections: string[]
+  ): Observable<GenerateResponse> {
+    return this.http.post<GenerateResponse>('/api/generate', {
+      parsed,
+      templateId,
+      enabledSections,
+    });
   }
 
   getTemplates(): Observable<{ templates: TemplateMetadata[] }> {

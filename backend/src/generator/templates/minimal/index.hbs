@@ -20,59 +20,77 @@
       </div>
     </header>
 
-    {{#if summary}}
+    {{#each activeSections}}
     <section class="section">
-      <p class="summary-text">{{summary}}</p>
-    </section>
-    {{/if}}
+      {{#if (eq this.type "text")}}
+      <p class="summary-text">{{this.textContent}}</p>
+      {{else}}
+      <h2 class="section-heading">{{this.title}}</h2>
+      {{/if}}
 
-    {{#if (hasItems experience)}}
-    <section class="section">
-      <h2 class="section-heading">Experience</h2>
-      {{#each experience}}
+      {{#if (eq this.type "list")}}
+      <p class="skills-text">{{join this.listItems ", "}}</p>
+      {{/if}}
+
+      {{#if (eq this.type "experience")}}
+      {{#each this.entries}}
       <div class="entry">
         <div class="entry-row">
           <div>
-            <span class="entry-primary">{{title}}</span>
-            {{#if company}}<span class="entry-secondary">{{company}}</span>{{/if}}
+            <span class="entry-primary">{{this.heading}}</span>
+            {{#if this.subheading}}<span class="entry-secondary">{{this.subheading}}</span>{{/if}}
           </div>
-          <span class="entry-date">{{dateRange startDate endDate}}</span>
+          {{#if this.date}}<span class="entry-date">{{this.date}}</span>{{/if}}
         </div>
-        {{#if location}}<div class="entry-location">{{location}}</div>{{/if}}
-        {{#if (hasItems bullets)}}
+        {{#if (hasItems this.bullets)}}
         <ul class="entry-list">
-          {{#each bullets}}<li>{{this}}</li>{{/each}}
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
         </ul>
         {{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems education)}}
-    <section class="section">
-      <h2 class="section-heading">Education</h2>
-      {{#each education}}
+      {{#if (eq this.type "education")}}
+      {{#each this.entries}}
       <div class="entry">
         <div class="entry-row">
           <div>
-            <span class="entry-primary">{{institution}}</span>
-            {{#if degree}}<span class="entry-secondary">{{degree}}{{#if field}} in {{field}}{{/if}}</span>{{/if}}
+            <span class="entry-primary">{{this.heading}}</span>
+            {{#if this.subheading}}<span class="entry-secondary">{{this.subheading}}</span>{{/if}}
           </div>
-          {{#if startDate}}<span class="entry-date">{{dateRange startDate endDate}}</span>{{/if}}
+          {{#if this.date}}<span class="entry-date">{{this.date}}</span>{{/if}}
         </div>
-        {{#if gpa}}<div class="entry-location">GPA: {{gpa}}</div>{{/if}}
+        {{#if (hasItems this.bullets)}}
+        <ul class="entry-list">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems skills)}}
-    <section class="section">
-      <h2 class="section-heading">Skills</h2>
-      <p class="skills-text">{{join skills ", "}}</p>
+      {{#if (eq this.type "entries")}}
+      {{#each this.entries}}
+      <div class="entry">
+        <div class="entry-row">
+          <div>
+            <span class="entry-primary">{{this.heading}}</span>
+            {{#if this.subheading}}<span class="entry-secondary">{{this.subheading}}</span>{{/if}}
+          </div>
+          {{#if this.date}}<span class="entry-date">{{this.date}}</span>{{/if}}
+        </div>
+        {{#if (hasItems this.bullets)}}
+        <ul class="entry-list">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
+      </div>
+      {{/each}}
+      {{/if}}
+
     </section>
-    {{/if}}
+    {{/each}}
 
   </div>
 </body>

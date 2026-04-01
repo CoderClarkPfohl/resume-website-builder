@@ -5,6 +5,7 @@ import uploadRouter from './routes/upload.route';
 import generateRouter from './routes/generate.route';
 import templatesRouter from './routes/templates.route';
 import deployRouter from './routes/deploy.route';
+import previewRouter from './routes/preview.route';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.use('/api', uploadRouter);
 app.use('/api', generateRouter);
 app.use('/api', templatesRouter);
 app.use('/api', deployRouter);
+app.use('/api', previewRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });

@@ -1,0 +1,114 @@
+<div class="picker">
+  <h2 class="picker-title">Choose Your Sections</h2>
+  <p class="picker-subtitle">
+    We found <strong>{{ detectedCount }}</strong> sections in your resume.
+    Toggle sections on the left, then drag to set the order on the right.
+  </p>
+
+  <div class="picker-actions">
+    <button class="btn-link" (click)="selectAll()" type="button">Select All Detected</button>
+    <button class="btn-link" (click)="deselectAll()" type="button">Deselect All</button>
+  </div>
+
+  <div class="picker-layout">
+
+    <!-- Left: section catalog -->
+    <div class="catalog">
+      @for (group of catalog; track group.category) {
+        @if (hasDetectedInCategory(group)) {
+          <div class="category">
+            <h3 class="category-title">{{ group.category }}</h3>
+            <div class="section-grid">
+              @for (item of group.items; track item.key) {
+                @if (isDetected(item.key)) {
+                  <button
+                    class="section-chip"
+                    [class.enabled]="isEnabled(item.key)"
+                    (click)="toggle(item.key)"
+                    type="button"
+                  >
+                    <span class="chip-check">{{ isEnabled(item.key) ? '✓' : '' }}</span>
+                    <span class="chip-label">{{ item.label }}</span>
+                  </button>
+                }
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <details class="more-sections">
+        <summary class="more-summary">Add sections not found in your resume</summary>
+        @for (group of catalog; track group.category) {
+          @if (hasUndetectedInCategory(group)) {
+            <div class="category category-dimmed">
+              <h3 class="category-title">{{ group.category }}</h3>
+              <div class="section-grid">
+                @for (item of group.items; track item.key) {
+                  @if (!isDetected(item.key)) {
+                    <button
+                      class="section-chip empty"
+                      [class.enabled]="isEnabled(item.key)"
+                      (click)="toggle(item.key)"
+                      type="button"
+                    >
+                      <span class="chip-check">{{ isEnabled(item.key) ? '✓' : '+' }}</span>
+                      <span class="chip-label">{{ item.label }}</span>
+                    </button>
+                  }
+                }
+              </div>
+            </div>
+          }
+        }
+      </details>
+    </div>
+
+    <!-- Right: drag-to-reorder panel -->
+    <div class="order-panel">
+      <div class="order-panel-header">
+        <span class="order-title">Section Order</span>
+        <span class="order-count">{{ enabledCount }} selected</span>
+      </div>
+      <p class="order-hint">Drag to reorder how sections appear on your site.</p>
+
+      <div class="order-list">
+        @if (orderedKeys.length === 0) {
+          <div class="order-empty">No sections selected yet</div>
+        }
+        @for (key of orderedKeys; track key; let i = $index) {
+          <div
+            class="order-item"
+            [class.is-dragging]="draggedIndex === i"
+            [class.drag-over]="dragOverIndex === i && draggedIndex !== i"
+            draggable="true"
+            (dragstart)="onDragStart($event, i)"
+            (dragover)="onDragOver($event, i)"
+            (drop)="onDrop($event, i)"
+            (dragend)="onDragEnd()"
+          >
+            <span class="drag-handle" aria-hidden="true">⠿</span>
+            <span class="order-num">{{ i + 1 }}</span>
+            <span class="order-label">{{ getLabelForKey(key) }}</span>
+            <button
+              class="btn-deselect"
+              (click)="toggle(key)"
+              type="button"
+              title="Remove section"
+            >✕</button>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <button
+    class="btn-continue"
+    [disabled]="enabledCount === 0"
+    (click)="confirm()"
+    type="button"
+  >
+    Continue with {{ enabledCount }} section{{ enabledCount === 1 ? '' : 's' }} →
+  </button>
+</div>

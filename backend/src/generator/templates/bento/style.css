@@ -46,6 +46,28 @@ a:hover { text-decoration: underline; }
   margin-bottom: 16px;
 }
 
+/* Dynamic card widths */
+.card-wide { grid-column: 1 / -1; }
+.card-text { grid-column: 1 / -1; }
+.card-list { grid-column: span 2; }
+
+.identity-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.identity-contact a { color: #fff; }
+
+.card-body-text {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #444;
+}
+
 /* ---- Identity (spans full width) ---- */
 .card-identity {
   grid-column: 1 / -1;

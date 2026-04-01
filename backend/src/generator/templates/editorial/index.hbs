@@ -25,50 +25,64 @@
       </div>
     </header>
 
-    {{#if summary}}
-    <section class="lede">
-      <p>{{summary}}</p>
-    </section>
-    {{/if}}
-
-    {{#if (hasItems experience)}}
+    {{#each activeSections}}
     <section class="section">
-      <h2 class="section-head">Experience</h2>
-      {{#each experience}}
+      {{#if (eq this.type "text")}}
+      <div class="lede"><p>{{this.textContent}}</p></div>
+      {{else}}
+      <h2 class="section-head">{{this.title}}</h2>
+      {{/if}}
+
+      {{#if (eq this.type "list")}}
+      <p class="skills-prose">{{join this.listItems " · "}}</p>
+      {{/if}}
+
+      {{#if (eq this.type "experience")}}
+      {{#each this.entries}}
       <div class="story">
-        <div class="story-kicker">{{dateRange startDate endDate}}{{#if location}} · {{location}}{{/if}}</div>
-        <h3 class="story-headline">{{title}}</h3>
-        <div class="story-byline">{{company}}</div>
-        {{#if (hasItems bullets)}}
+        <div class="story-kicker">{{this.date}}{{#if this.subheading}} · {{this.subheading}}{{/if}}</div>
+        <h3 class="story-headline">{{this.heading}}</h3>
+        {{#if (hasItems this.bullets)}}
         <ul class="story-body">
-          {{#each bullets}}<li>{{this}}</li>{{/each}}
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
         </ul>
         {{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems education)}}
-    <section class="section">
-      <h2 class="section-head">Education</h2>
-      {{#each education}}
+      {{#if (eq this.type "education")}}
+      {{#each this.entries}}
       <div class="story">
-        <div class="story-kicker">{{dateRange startDate endDate}}</div>
-        <h3 class="story-headline">{{institution}}</h3>
-        {{#if degree}}<div class="story-byline">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-        {{#if gpa}}<div class="story-note">GPA: {{gpa}}</div>{{/if}}
+        {{#if this.date}}<div class="story-kicker">{{this.date}}</div>{{/if}}
+        <h3 class="story-headline">{{this.heading}}</h3>
+        {{#if this.subheading}}<div class="story-byline">{{this.subheading}}</div>{{/if}}
+        {{#if (hasItems this.bullets)}}
+        <ul class="story-body">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems skills)}}
-    <section class="section">
-      <h2 class="section-head">Skills</h2>
-      <p class="skills-prose">{{join skills " · "}}</p>
+      {{#if (eq this.type "entries")}}
+      {{#each this.entries}}
+      <div class="story">
+        {{#if this.date}}<div class="story-kicker">{{this.date}}</div>{{/if}}
+        <h3 class="story-headline">{{this.heading}}</h3>
+        {{#if this.subheading}}<div class="story-byline">{{this.subheading}}</div>{{/if}}
+        {{#if (hasItems this.bullets)}}
+        <ul class="story-body">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
+      </div>
+      {{/each}}
+      {{/if}}
+
     </section>
-    {{/if}}
+    {{/each}}
 
     <footer class="colophon">
       <div class="masthead-rule"></div>

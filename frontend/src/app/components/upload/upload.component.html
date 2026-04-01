@@ -42,6 +42,24 @@
       </div>
     }
 
+    <!-- SECTION SELECT (new step) -->
+    @if (state === 'section-select' && parsedResume) {
+      <app-section-picker
+        [detectedSections]="parsedResume.sections"
+        (sectionsConfirmed)="onSectionsConfirmed($event)"
+      />
+    }
+
+    <!-- RESUME EDIT -->
+    @if (state === 'resume-edit' && parsedResume) {
+      <app-resume-editor
+        [parsedResume]="parsedResume"
+        [enabledSections]="enabledSections"
+        (resumeEdited)="onResumeEdited($event)"
+        (back)="onEditorBack()"
+      />
+    }
+
     <!-- TEMPLATE SELECT -->
     @if (state === 'template-select') {
       <app-template-picker

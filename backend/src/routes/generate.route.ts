@@ -19,8 +19,10 @@ router.post('/generate', async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
+  const enabledSections = body.enabledSections || [];
+
   try {
-    const result = await generateSite(body.parsed, body.templateId);
+    const result = await generateSite(body.parsed, body.templateId, enabledSections);
     res.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to generate site.';

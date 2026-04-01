@@ -15,10 +15,9 @@
         <h1 class="side-name">{{name}}</h1>
 
         <nav class="side-nav">
-          {{#if summary}}<a href="#about">About</a>{{/if}}
-          {{#if (hasItems experience)}}<a href="#experience">Experience</a>{{/if}}
-          {{#if (hasItems education)}}<a href="#education">Education</a>{{/if}}
-          {{#if (hasItems skills)}}<a href="#skills">Skills</a>{{/if}}
+          {{#each activeSections}}
+          <a href="#section-{{@index}}">{{this.title}}</a>
+          {{/each}}
         </nav>
 
         <div class="side-contact">
@@ -33,59 +32,77 @@
 
     <main class="content">
 
-      {{#if summary}}
-      <section id="about" class="sect">
-        <h2 class="sect-title">About</h2>
-        <p class="about-text">{{summary}}</p>
-      </section>
-      {{/if}}
+      {{#each activeSections}}
+      <section id="section-{{@index}}" class="sect">
+        <h2 class="sect-title">{{this.title}}</h2>
 
-      {{#if (hasItems experience)}}
-      <section id="experience" class="sect">
-        <h2 class="sect-title">Experience</h2>
-        {{#each experience}}
+        {{#if (eq this.type "text")}}
+        <p class="about-text">{{this.textContent}}</p>
+        {{/if}}
+
+        {{#if (eq this.type "list")}}
+        <div class="skill-bars">
+          {{#each this.listItems}}<span class="skill-bar">{{this}}</span>{{/each}}
+        </div>
+        {{/if}}
+
+        {{#if (eq this.type "experience")}}
+        {{#each this.entries}}
         <div class="exp-card">
           <div class="exp-top">
             <div>
-              <div class="exp-role">{{title}}</div>
-              <div class="exp-company">{{company}}{{#if location}} · {{location}}{{/if}}</div>
+              <div class="exp-role">{{this.heading}}</div>
+              {{#if this.subheading}}<div class="exp-company">{{this.subheading}}</div>{{/if}}
             </div>
-            <div class="exp-date">{{dateRange startDate endDate}}</div>
+            {{#if this.date}}<div class="exp-date">{{this.date}}</div>{{/if}}
           </div>
-          {{#if (hasItems bullets)}}
+          {{#if (hasItems this.bullets)}}
           <ul class="exp-bullets">
-            {{#each bullets}}<li>{{this}}</li>{{/each}}
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
           </ul>
           {{/if}}
         </div>
         {{/each}}
-      </section>
-      {{/if}}
+        {{/if}}
 
-      {{#if (hasItems education)}}
-      <section id="education" class="sect">
-        <h2 class="sect-title">Education</h2>
-        {{#each education}}
+        {{#if (eq this.type "education")}}
+        {{#each this.entries}}
         <div class="edu-row">
           <div>
-            <div class="edu-inst">{{institution}}</div>
-            {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-            {{#if gpa}}<div class="edu-meta">GPA: {{gpa}}</div>{{/if}}
+            <div class="edu-inst">{{this.heading}}</div>
+            {{#if this.subheading}}<div class="edu-degree">{{this.subheading}}</div>{{/if}}
+            {{#if (hasItems this.bullets)}}
+            <ul class="exp-bullets">
+              {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+            </ul>
+            {{/if}}
           </div>
-          {{#if startDate}}<div class="edu-date">{{dateRange startDate endDate}}</div>{{/if}}
+          {{#if this.date}}<div class="edu-date">{{this.date}}</div>{{/if}}
         </div>
         {{/each}}
-      </section>
-      {{/if}}
+        {{/if}}
 
-      {{#if (hasItems skills)}}
-      <section id="skills" class="sect">
-        <h2 class="sect-title">Skills</h2>
-        <div class="skill-bars">
-          {{#each skills}}<span class="skill-bar">{{this}}</span>{{/each}}
+        {{#if (eq this.type "entries")}}
+        {{#each this.entries}}
+        <div class="exp-card">
+          <div class="exp-top">
+            <div>
+              <div class="exp-role">{{this.heading}}</div>
+              {{#if this.subheading}}<div class="exp-company">{{this.subheading}}</div>{{/if}}
+            </div>
+            {{#if this.date}}<div class="exp-date">{{this.date}}</div>{{/if}}
+          </div>
+          {{#if (hasItems this.bullets)}}
+          <ul class="exp-bullets">
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
         </div>
+        {{/each}}
+        {{/if}}
+
       </section>
-      {{/if}}
+      {{/each}}
 
     </main>
   </div>

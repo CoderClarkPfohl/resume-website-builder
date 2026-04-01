@@ -16,6 +16,22 @@ export interface Education {
   gpa?: string;
 }
 
+export interface GenericEntry {
+  heading: string;
+  subheading?: string;
+  date?: string;
+  bullets: string[];
+}
+
+export interface GenericSection {
+  key: string;
+  title: string;
+  type: 'experience' | 'education' | 'list' | 'text' | 'entries';
+  textContent?: string;
+  listItems?: string[];
+  entries?: GenericEntry[];
+}
+
 export interface ParsedResume {
   name: string;
   email: string;
@@ -23,10 +39,13 @@ export interface ParsedResume {
   location?: string;
   linkedin?: string;
   website?: string;
+  github?: string;
+  portfolio?: string;
   summary: string;
   experience: WorkExperience[];
   education: Education[];
   skills: string[];
+  sections: Record<string, GenericSection>;
 }
 
 export interface UploadResponse {

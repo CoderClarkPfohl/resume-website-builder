@@ -28,50 +28,67 @@
         </div>
       </div>
 
-      {{#if summary}}
-      <div class="line"><span class="prompt">$</span> cat summary.txt</div>
-      <div class="output summary">{{summary}}</div>
-      {{/if}}
-
-      {{#if (hasItems experience)}}
-      <div class="line"><span class="prompt">$</span> ls experience/</div>
+      {{#each activeSections}}
+      <div class="line"><span class="prompt">$</span> cat {{this.key}}.txt</div>
       <div class="output">
-        {{#each experience}}
+        {{#if (eq this.type "text")}}
+        <div class="summary">{{this.textContent}}</div>
+        {{/if}}
+
+        {{#if (eq this.type "list")}}
+        <div class="skills-output">{{join this.listItems " · "}}</div>
+        {{/if}}
+
+        {{#if (eq this.type "experience")}}
+        {{#each this.entries}}
         <div class="exp-block">
           <div class="exp-header">
-            <span class="exp-title">{{title}}</span>
-            <span class="exp-at">@ {{company}}</span>
-            <span class="exp-date">[{{dateRange startDate endDate}}]</span>
+            <span class="exp-title">{{this.heading}}</span>
+            {{#if this.subheading}}<span class="exp-at">@ {{this.subheading}}</span>{{/if}}
+            {{#if this.date}}<span class="exp-date">[{{this.date}}]</span>{{/if}}
           </div>
-          {{#if location}}<div class="exp-loc">  // {{location}}</div>{{/if}}
-          {{#if (hasItems bullets)}}
+          {{#if (hasItems this.bullets)}}
           <ul class="exp-bullets">
-            {{#each bullets}}<li><span class="bullet-arrow">→</span> {{this}}</li>{{/each}}
+            {{#each this.bullets}}<li><span class="bullet-arrow">→</span> {{this}}</li>{{/each}}
           </ul>
           {{/if}}
         </div>
         {{/each}}
-      </div>
-      {{/if}}
+        {{/if}}
 
-      {{#if (hasItems education)}}
-      <div class="line"><span class="prompt">$</span> ls education/</div>
-      <div class="output">
-        {{#each education}}
+        {{#if (eq this.type "education")}}
+        {{#each this.entries}}
         <div class="edu-block">
-          <span class="edu-inst">{{institution}}</span>
-          {{#if degree}}<span class="edu-degree"> — {{degree}}{{#if field}} in {{field}}{{/if}}</span>{{/if}}
-          {{#if startDate}}<span class="exp-date"> [{{dateRange startDate endDate}}]</span>{{/if}}
-          {{#if gpa}}<div class="edu-gpa">  GPA: {{gpa}}</div>{{/if}}
+          <span class="edu-inst">{{this.heading}}</span>
+          {{#if this.subheading}}<span class="edu-degree"> — {{this.subheading}}</span>{{/if}}
+          {{#if this.date}}<span class="exp-date"> [{{this.date}}]</span>{{/if}}
+          {{#if (hasItems this.bullets)}}
+          <ul class="exp-bullets">
+            {{#each this.bullets}}<li><span class="bullet-arrow">→</span> {{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
         </div>
         {{/each}}
-      </div>
-      {{/if}}
+        {{/if}}
 
-      {{#if (hasItems skills)}}
-      <div class="line"><span class="prompt">$</span> echo $SKILLS</div>
-      <div class="output skills-output">{{join skills " · "}}</div>
-      {{/if}}
+        {{#if (eq this.type "entries")}}
+        {{#each this.entries}}
+        <div class="exp-block">
+          <div class="exp-header">
+            <span class="exp-title">{{this.heading}}</span>
+            {{#if this.subheading}}<span class="exp-at">@ {{this.subheading}}</span>{{/if}}
+            {{#if this.date}}<span class="exp-date">[{{this.date}}]</span>{{/if}}
+          </div>
+          {{#if (hasItems this.bullets)}}
+          <ul class="exp-bullets">
+            {{#each this.bullets}}<li><span class="bullet-arrow">→</span> {{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
+        </div>
+        {{/each}}
+        {{/if}}
+      </div>
+      {{/each}}
 
       <div class="line"><span class="prompt">$</span> <span class="cursor">_</span></div>
     </div>

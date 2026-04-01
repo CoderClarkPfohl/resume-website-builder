@@ -18,62 +18,89 @@
         {{#if linkedin}}<a href="https://{{linkedin}}" target="_blank" rel="noopener">LinkedIn</a>{{/if}}
         {{#if website}}<a href="{{website}}" target="_blank" rel="noopener">Portfolio</a>{{/if}}
       </div>
-      {{#if summary}}
-      <p class="hero-summary">{{summary}}</p>
-      {{/if}}
     </header>
 
-    {{#if (hasItems experience)}}
+    {{#each activeSections}}
     <section class="section">
-      <h2 class="section-title">Experience</h2>
+      <h2 class="section-title">{{this.title}}</h2>
+
+      {{#if (eq this.type "text")}}
+      <p class="hero-summary">{{this.textContent}}</p>
+      {{/if}}
+
+      {{#if (eq this.type "list")}}
+      <div class="skill-tags">
+        {{#each this.listItems}}<span class="skill-tag">{{this}}</span>{{/each}}
+      </div>
+      {{/if}}
+
+      {{#if (eq this.type "experience")}}
       <div class="timeline">
-        {{#each experience}}
+        {{#each this.entries}}
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="timeline-header">
               <div>
-                <div class="timeline-role">{{title}}</div>
-                <div class="timeline-company">{{company}}{{#if location}} · {{location}}{{/if}}</div>
+                <div class="timeline-role">{{this.heading}}</div>
+                {{#if this.subheading}}<div class="timeline-company">{{this.subheading}}</div>{{/if}}
               </div>
-              <span class="timeline-date">{{dateRange startDate endDate}}</span>
+              {{#if this.date}}<span class="timeline-date">{{this.date}}</span>{{/if}}
             </div>
-            {{#if (hasItems bullets)}}
+            {{#if (hasItems this.bullets)}}
             <ul class="timeline-bullets">
-              {{#each bullets}}<li>{{this}}</li>{{/each}}
+              {{#each this.bullets}}<li>{{this}}</li>{{/each}}
             </ul>
             {{/if}}
           </div>
         </div>
         {{/each}}
       </div>
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems education)}}
-    <section class="section">
-      <h2 class="section-title">Education</h2>
-      {{#each education}}
+      {{#if (eq this.type "education")}}
+      {{#each this.entries}}
       <div class="edu-row">
         <div>
-          <div class="edu-inst">{{institution}}</div>
-          {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-          {{#if gpa}}<div class="edu-gpa">GPA: {{gpa}}</div>{{/if}}
+          <div class="edu-inst">{{this.heading}}</div>
+          {{#if this.subheading}}<div class="edu-degree">{{this.subheading}}</div>{{/if}}
+          {{#if (hasItems this.bullets)}}
+          <ul class="timeline-bullets">
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
         </div>
-        {{#if startDate}}<span class="edu-date">{{dateRange startDate endDate}}</span>{{/if}}
+        {{#if this.date}}<span class="edu-date">{{this.date}}</span>{{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems skills)}}
-    <section class="section">
-      <h2 class="section-title">Skills</h2>
-      <div class="skill-tags">
-        {{#each skills}}<span class="skill-tag">{{this}}</span>{{/each}}
+      {{#if (eq this.type "entries")}}
+      <div class="timeline">
+        {{#each this.entries}}
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <div>
+                <div class="timeline-role">{{this.heading}}</div>
+                {{#if this.subheading}}<div class="timeline-company">{{this.subheading}}</div>{{/if}}
+              </div>
+              {{#if this.date}}<span class="timeline-date">{{this.date}}</span>{{/if}}
+            </div>
+            {{#if (hasItems this.bullets)}}
+            <ul class="timeline-bullets">
+              {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+            </ul>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
       </div>
+      {{/if}}
+
     </section>
-    {{/if}}
+    {{/each}}
 
   </div>
 </body>

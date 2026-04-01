@@ -47,40 +47,43 @@
         {{/if}}
       </div>
 
-      {{#if (hasItems skills)}}
+      <!-- Sidebar list sections (skills, tools, languages, etc.) -->
+      {{#each activeSections}}
+      {{#if (eq this.type "list")}}
       <div class="sidebar-section">
-        <div class="sidebar-section-title">Skills</div>
+        <div class="sidebar-section-title">{{this.title}}</div>
         <div class="skills-chips">
-          {{#each skills}}<span class="skill-chip">{{this}}</span>{{/each}}
+          {{#each this.listItems}}<span class="skill-chip">{{this}}</span>{{/each}}
         </div>
       </div>
       {{/if}}
+      {{/each}}
     </aside>
 
     <!-- Main content -->
     <main class="main">
 
-      {{#if summary}}
+      {{#each activeSections}}
+      {{#if (eq this.type "text")}}
       <section class="section summary">
-        <h2 class="section-title">About</h2>
-        <p>{{summary}}</p>
+        <h2 class="section-title">{{this.title}}</h2>
+        <p>{{this.textContent}}</p>
       </section>
       {{/if}}
 
-      {{#if (hasItems experience)}}
+      {{#if (eq this.type "experience")}}
       <section class="section">
-        <h2 class="section-title">Experience</h2>
-        {{#each experience}}
+        <h2 class="section-title">{{this.title}}</h2>
+        {{#each this.entries}}
         <div class="job">
           <div class="job-header">
-            <span class="job-company">{{company}}</span>
-            <span class="job-dates">{{dateRange startDate endDate}}</span>
+            <span class="job-company">{{this.heading}}</span>
+            {{#if this.date}}<span class="job-dates">{{this.date}}</span>{{/if}}
           </div>
-          {{#if title}}<div class="job-title">{{title}}</div>{{/if}}
-          {{#if location}}<div class="job-location">{{location}}</div>{{/if}}
-          {{#if (hasItems bullets)}}
+          {{#if this.subheading}}<div class="job-title">{{this.subheading}}</div>{{/if}}
+          {{#if (hasItems this.bullets)}}
           <ul class="job-bullets">
-            {{#each bullets}}<li>{{this}}</li>{{/each}}
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
           </ul>
           {{/if}}
         </div>
@@ -88,21 +91,46 @@
       </section>
       {{/if}}
 
-      {{#if (hasItems education)}}
+      {{#if (eq this.type "education")}}
       <section class="section">
-        <h2 class="section-title">Education</h2>
-        {{#each education}}
+        <h2 class="section-title">{{this.title}}</h2>
+        {{#each this.entries}}
         <div class="edu-item">
           <div class="edu-header">
-            <span class="edu-institution">{{institution}}</span>
-            {{#if startDate}}<span class="edu-dates">{{dateRange startDate endDate}}</span>{{/if}}
+            <span class="edu-institution">{{this.heading}}</span>
+            {{#if this.date}}<span class="edu-dates">{{this.date}}</span>{{/if}}
           </div>
-          {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-          {{#if gpa}}<div class="edu-gpa">GPA: {{gpa}}</div>{{/if}}
+          {{#if this.subheading}}<div class="edu-degree">{{this.subheading}}</div>{{/if}}
+          {{#if (hasItems this.bullets)}}
+          <ul class="job-bullets">
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
         </div>
         {{/each}}
       </section>
       {{/if}}
+
+      {{#if (eq this.type "entries")}}
+      <section class="section">
+        <h2 class="section-title">{{this.title}}</h2>
+        {{#each this.entries}}
+        <div class="job">
+          <div class="job-header">
+            <span class="job-company">{{this.heading}}</span>
+            {{#if this.date}}<span class="job-dates">{{this.date}}</span>{{/if}}
+          </div>
+          {{#if this.subheading}}<div class="job-title">{{this.subheading}}</div>{{/if}}
+          {{#if (hasItems this.bullets)}}
+          <ul class="job-bullets">
+            {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+          </ul>
+          {{/if}}
+        </div>
+        {{/each}}
+      </section>
+      {{/if}}
+      {{/each}}
 
     </main>
   </div>

@@ -52,12 +52,12 @@ export type SectionMap = Record<SectionName, string[]>;
 
 const SECTION_PATTERNS: Array<{ name: SectionName; pattern: RegExp }> = [
   // Summary / Objective / Profile
-  { name: 'summary', pattern: /^(professional\s+)?(summary|objective|about(\s+me)?)$/i },
+  { name: 'summary', pattern: /^(professional\s+)?(summary|objective|about(\s+me)?|profile|career\s+objective|career\s+summary)$/i },
   { name: 'professionalProfile', pattern: /^professional\s+profile$/i },
   { name: 'personalBranding', pattern: /^personal\s+brand(ing)?\s+(statement|summary)?$/i },
 
   // Experience variants
-  { name: 'experience', pattern: /^(work\s+)?(experience|employment|history|background|work\s+history)$/i },
+  { name: 'experience', pattern: /^(work\s+)?(experience|employment|history|background|work\s+history|professional\s+experience)$/i },
   { name: 'relevantExperience', pattern: /^relevant\s+(experience|work)$/i },
   { name: 'internshipExperience', pattern: /^internship(s|\s+experience)?$/i },
   { name: 'leadershipExperience', pattern: /^leadership(\s+experience|\s+roles?)?$/i },
@@ -72,10 +72,11 @@ const SECTION_PATTERNS: Array<{ name: SectionName; pattern: RegExp }> = [
   { name: 'capstoneThesis', pattern: /^(capstone|thesis|senior\s+project|dissertation)(\/thesis)?$/i },
 
   // Skills variants
-  { name: 'skills', pattern: /^(key\s+)?skills?(\s+&\s+expertise)?$/i },
+  { name: 'skills', pattern: /^(key\s+)?skills?(\s+(and|&)\s*(qualifications?|expertise|experience|summary|competencies))?$/i },
+  { name: 'skills', pattern: /^(qualifications?\s+and\s+)?skills?\s+and\s+qualifications?$/i },
   { name: 'technicalSkills', pattern: /^technical\s+skills?(\s+summary)?$/i },
   { name: 'toolsTechnologies', pattern: /^(tools|technologies)(\s+[&and]+\s+(technologies|tools))?$/i },
-  { name: 'coreCompetencies', pattern: /^core\s+(competencies|skills|qualifications)$/i },
+  { name: 'coreCompetencies', pattern: /^(core\s+)?(competencies|qualifications?)(\s+(and|&)\s+skills?)?$/i },
   { name: 'technicalCompetencies', pattern: /^technical\s+(competencies|proficiencies)(\s+matrix)?$/i },
 
   // Projects

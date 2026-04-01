@@ -21,7 +21,7 @@
       <div class="window-body">
 
         <div class="marquee-bar">
-          <span class="marquee-text">★ Welcome to {{name}}'s Personal Homepage ★ Last updated: 2024 ★</span>
+          <span class="marquee-text">★ Welcome to {{name}}'s Personal Homepage ★</span>
         </div>
 
         <div class="hero-banner">
@@ -35,67 +35,78 @@
           </div>
         </div>
 
-        {{#if summary}}
+        {{#each activeSections}}
         <div class="panel">
-          <div class="panel-header">📋 About Me</div>
+          <div class="panel-header">📋 {{this.title}}</div>
           <div class="panel-body">
-            <p>{{summary}}</p>
-          </div>
-        </div>
-        {{/if}}
 
-        {{#if (hasItems experience)}}
-        <div class="panel">
-          <div class="panel-header">💼 Work Experience</div>
-          <div class="panel-body">
-            {{#each experience}}
+            {{#if (eq this.type "text")}}
+            <p>{{this.textContent}}</p>
+            {{/if}}
+
+            {{#if (eq this.type "list")}}
+            <div class="retro-skills">
+              {{#each this.listItems}}<span class="retro-skill">{{this}}</span>{{/each}}
+            </div>
+            {{/if}}
+
+            {{#if (eq this.type "experience")}}
+            {{#each this.entries}}
             <div class="retro-entry">
               <div class="retro-entry-header">
                 <span class="retro-bullet">▶</span>
-                <strong>{{title}}</strong> @ {{company}}
-                <span class="retro-date">[{{dateRange startDate endDate}}]</span>
+                <strong>{{this.heading}}</strong>
+                {{#if this.subheading}} @ {{this.subheading}}{{/if}}
+                {{#if this.date}}<span class="retro-date">[{{this.date}}]</span>{{/if}}
               </div>
-              {{#if location}}<div class="retro-loc">📍 {{location}}</div>{{/if}}
-              {{#if (hasItems bullets)}}
+              {{#if (hasItems this.bullets)}}
               <ul class="retro-list">
-                {{#each bullets}}<li>{{this}}</li>{{/each}}
+                {{#each this.bullets}}<li>{{this}}</li>{{/each}}
               </ul>
               {{/if}}
             </div>
             {{/each}}
-          </div>
-        </div>
-        {{/if}}
+            {{/if}}
 
-        {{#if (hasItems education)}}
-        <div class="panel">
-          <div class="panel-header">🎓 Education</div>
-          <div class="panel-body">
-            {{#each education}}
+            {{#if (eq this.type "education")}}
+            {{#each this.entries}}
             <div class="retro-entry">
               <div class="retro-entry-header">
                 <span class="retro-bullet">▶</span>
-                <strong>{{institution}}</strong>
-                {{#if startDate}}<span class="retro-date">[{{dateRange startDate endDate}}]</span>{{/if}}
+                <strong>{{this.heading}}</strong>
+                {{#if this.date}}<span class="retro-date">[{{this.date}}]</span>{{/if}}
               </div>
-              {{#if degree}}<div class="retro-detail">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-              {{#if gpa}}<div class="retro-detail">GPA: {{gpa}}</div>{{/if}}
+              {{#if this.subheading}}<div class="retro-detail">{{this.subheading}}</div>{{/if}}
+              {{#if (hasItems this.bullets)}}
+              <ul class="retro-list">
+                {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+              </ul>
+              {{/if}}
             </div>
             {{/each}}
-          </div>
-        </div>
-        {{/if}}
+            {{/if}}
 
-        {{#if (hasItems skills)}}
-        <div class="panel">
-          <div class="panel-header">🛠️ Skills</div>
-          <div class="panel-body">
-            <div class="retro-skills">
-              {{#each skills}}<span class="retro-skill">{{this}}</span>{{/each}}
+            {{#if (eq this.type "entries")}}
+            {{#each this.entries}}
+            <div class="retro-entry">
+              <div class="retro-entry-header">
+                <span class="retro-bullet">▶</span>
+                <strong>{{this.heading}}</strong>
+                {{#if this.subheading}} — {{this.subheading}}{{/if}}
+                {{#if this.date}}<span class="retro-date">[{{this.date}}]</span>{{/if}}
+              </div>
+              {{#if (hasItems this.bullets)}}
+              <ul class="retro-list">
+                {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+              </ul>
+              {{/if}}
             </div>
+            {{/each}}
+            {{/if}}
+
           </div>
         </div>
-        {{/if}}
+        {{/each}}
 
         <div class="footer-bar">
           <span>🔧 Best viewed in any browser</span>

@@ -1,0 +1,120 @@
+<div class="editor">
+
+  <div class="editor-topbar">
+    <button class="btn-back" (click)="back.emit()" type="button">← Back</button>
+    <div class="topbar-center">
+      <h2 class="editor-title">Review &amp; Edit</h2>
+      <p class="editor-sub">Fix any parsing mistakes before generating your site.</p>
+    </div>
+    <button class="btn-continue" (click)="confirm()" type="button">Continue to Templates →</button>
+  </div>
+
+  <!-- Contact Info -->
+  <section class="editor-section">
+    <h3 class="section-heading">Contact Info</h3>
+    <div class="contact-grid">
+      <label class="field-label">
+        <span>Name</span>
+        <input class="field-input" [(ngModel)]="draft.name" placeholder="Your Name" />
+      </label>
+      <label class="field-label">
+        <span>Email</span>
+        <input class="field-input" [(ngModel)]="draft.email" placeholder="email@example.com" />
+      </label>
+      <label class="field-label">
+        <span>Phone</span>
+        <input class="field-input" [(ngModel)]="draft.phone" placeholder="555-555-5555" />
+      </label>
+      <label class="field-label">
+        <span>Location</span>
+        <input class="field-input" [(ngModel)]="draft.location" placeholder="City, State" />
+      </label>
+      <label class="field-label">
+        <span>LinkedIn</span>
+        <input class="field-input" [(ngModel)]="draft.linkedin" placeholder="linkedin.com/in/you" />
+      </label>
+      <label class="field-label">
+        <span>Website</span>
+        <input class="field-input" [(ngModel)]="draft.website" placeholder="yoursite.com" />
+      </label>
+    </div>
+  </section>
+
+  <!-- Detected sections -->
+  @for (key of activeSectionKeys; track key) {
+    @if (draft.sections[key]; as section) {
+      <section class="editor-section">
+        <h3 class="section-heading">{{ section.title }}</h3>
+
+        <!-- Text (summary, profile, etc.) -->
+        @if (section.type === 'text') {
+          <textarea
+            class="field-textarea"
+            [(ngModel)]="section.textContent"
+            rows="4"
+            placeholder="Write a brief summary…"
+          ></textarea>
+        }
+
+        <!-- List (skills, languages, etc.) -->
+        @if (section.type === 'list') {
+          <p class="field-hint">One item per line</p>
+          <textarea
+            class="field-textarea"
+            [value]="getListText(section)"
+            (change)="setListFromText(section, $any($event.target).value)"
+            rows="6"
+            placeholder="TypeScript&#10;React&#10;Node.js"
+          ></textarea>
+        }
+
+        <!-- Experience / Education / Entries -->
+        @if (isEntryType(section)) {
+          <div class="entries-list">
+            @for (entry of (section.entries ?? []); track $index; let i = $index) {
+              <div class="entry-card">
+                <div class="entry-row">
+                  <input
+                    class="input-heading"
+                    [(ngModel)]="entry.heading"
+                    placeholder="Title / Institution"
+                  />
+                  <button class="btn-remove" (click)="removeEntry(key, i)" type="button" title="Remove entry">✕</button>
+                </div>
+                <div class="entry-row entry-meta">
+                  <input
+                    class="input-sub"
+                    [(ngModel)]="entry.subheading"
+                    placeholder="Company / Degree / Details"
+                  />
+                  <input
+                    class="input-date"
+                    [(ngModel)]="entry.date"
+                    placeholder="2020 – 2022"
+                  />
+                </div>
+                <div class="bullets-block">
+                  <p class="field-hint">Bullet points (one per line)</p>
+                  <textarea
+                    class="field-textarea bullets-textarea"
+                    [value]="getBulletsText(entry)"
+                    (change)="setBulletsFromText(entry, $any($event.target).value)"
+                    rows="3"
+                    placeholder="Led team of 5 engineers&#10;Reduced load time by 40%"
+                  ></textarea>
+                </div>
+              </div>
+            }
+            <button class="btn-add-entry" (click)="addEntry(key)" type="button">+ Add Entry</button>
+          </div>
+        }
+
+      </section>
+    }
+  }
+
+  <div class="editor-footer">
+    <button class="btn-continue-lg" (click)="confirm()" type="button">Continue to Templates →</button>
+  </div>
+
+</div>

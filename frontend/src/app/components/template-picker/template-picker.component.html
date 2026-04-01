@@ -1,6 +1,6 @@
-<div class="picker">
+<div class="picker" [class.drawer-open]="drawerOpen">
   <h2 class="picker-title">Choose a Template</h2>
-  <p class="picker-subtitle">Pick a style for your resume website.</p>
+  <p class="picker-subtitle">Pick a style for your resume website. Click any template to preview it.</p>
 
   <div class="template-grid">
     @for (tmpl of templates; track tmpl.id) {
@@ -36,4 +36,41 @@
       Generate My Site →
     }
   </button>
+</div>
+
+<!-- Backdrop -->
+@if (drawerOpen) {
+  <div class="drawer-backdrop" (click)="closeDrawer()"></div>
+}
+
+<!-- Preview Drawer -->
+<div class="preview-drawer" [class.open]="drawerOpen">
+  <div class="drawer-header">
+    <div class="drawer-title-block">
+      <span class="drawer-label">Preview</span>
+      @if (previewTemplate) {
+        <strong class="drawer-tmpl-name">{{ previewTemplate.name }}</strong>
+        <span class="drawer-tmpl-desc">{{ previewTemplate.description }}</span>
+      }
+    </div>
+    <button class="btn-drawer-close" (click)="closeDrawer()" type="button" aria-label="Close preview">✕</button>
+  </div>
+
+  <div class="drawer-iframe-wrap">
+    @if (drawerOpen && previewUrl) {
+      <iframe
+        class="preview-iframe"
+        [src]="previewUrl"
+        title="Template preview"
+        sandbox="allow-same-origin allow-scripts"
+        loading="lazy"
+      ></iframe>
+    }
+  </div>
+
+  <div class="drawer-footer">
+    <button class="btn-use-template" (click)="selectFromDrawer()" type="button">
+      Use This Template
+    </button>
+  </div>
 </div>

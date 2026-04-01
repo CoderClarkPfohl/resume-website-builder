@@ -314,6 +314,28 @@ function getSectionType(key: SectionName): 'experience' | 'education' | 'list' |
   return 'entries';
 }
 
+// For unrecognized sections (type "other"), infer the best rendering type from the actual content.
+// Avoids dumping skill lists as flat entry headings.
+function inferTypeFromContent(lines: string[]): 'list' | 'text' | 'entries' {
+  const nonEmpty = lines.filter((l) => l.trim().length > 0);
+  if (nonEmpty.length === 0) return 'entries';
+
+  const hasDateRange = nonEmpty.some((l) => DATE_RANGE_RE.test(l));
+  if (hasDateRange) return 'entries';
+
+  const hasBullets = nonEmpty.some(isBullet);
+  const shortCount = nonEmpty.filter((l) => l.trim().length <= 60).length;
+  const longCount = nonEmpty.filter((l) => l.trim().length > 80).length;
+
+  // Mostly short non-bullet items with no dates → treat as a list (renders as chips)
+  if (!hasBullets && shortCount / nonEmpty.length >= 0.6 && longCount === 0) return 'list';
+
+  // Mostly long lines with no structure → paragraph text
+  if (longCount / nonEmpty.length >= 0.5 && !hasBullets) return 'text';
+
+  return 'entries';
+}
+
 export function parseResume(rawText: string): ParsedResume {
   const sectionMap = detectSections(rawText);
 
@@ -324,7 +346,18 @@ export function parseResume(rawText: string): ParsedResume {
 
   // Parse the core sections the old way for backwards compat
   const experience = parseExperience(sectionMap.experience);
-  const education = parseEducation(sectionMap.education);
+
+  // For education: if the dedicated section is empty, try to find degree lines that ended
+  // up in the header (common with two-column PDF layouts where the degree sits in the
+  // header area before any section heading is detected).
+  const educationLines =
+    sectionMap.education.length > 0
+      ? sectionMap.education
+      : sectionMap.header.filter(
+          (l) => DEGREE_RE.test(l) || /university|college|institute|school/i.test(l) || extractGpa(l),
+        );
+  const education = parseEducation(educationLines);
+
   const skills = parseSkills(sectionMap.skills);
   const summary = parseSummary(sectionMap.summary);
 
@@ -336,7 +369,7 @@ export function parseResume(rawText: string): ParsedResume {
     if (!lines || lines.length === 0) continue;
     if (key === 'header') continue;
 
-    const type = getSectionType(key);
+    const type = key === 'other' ? inferTypeFromContent(lines) : getSectionType(key);
     const section: GenericSection = {
       key,
       title: SECTION_DISPLAY_TITLES[key],

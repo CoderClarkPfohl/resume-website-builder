@@ -12,70 +12,86 @@
     <!-- Identity card -->
     <div class="card card-identity">
       <h1 class="identity-name">{{name}}</h1>
-      {{#if summary}}<p class="identity-summary">{{summary}}</p>{{/if}}
-    </div>
-
-    <!-- Contact card -->
-    <div class="card card-contact">
-      <h2 class="card-title">Contact</h2>
-      <ul class="contact-list">
-        {{#if email}}<li><span class="label">Email</span><a href="mailto:{{email}}">{{email}}</a></li>{{/if}}
-        {{#if phone}}<li><span class="label">Phone</span><span>{{phone}}</span></li>{{/if}}
-        {{#if location}}<li><span class="label">Location</span><span>{{location}}</span></li>{{/if}}
-        {{#if linkedin}}<li><span class="label">LinkedIn</span><a href="https://{{linkedin}}" target="_blank" rel="noopener">{{linkedin}}</a></li>{{/if}}
-        {{#if website}}<li><span class="label">Website</span><a href="{{website}}" target="_blank" rel="noopener">{{website}}</a></li>{{/if}}
-      </ul>
-    </div>
-
-    {{#if (hasItems skills)}}
-    <!-- Skills card -->
-    <div class="card card-skills">
-      <h2 class="card-title">Skills</h2>
-      <div class="skill-pills">
-        {{#each skills}}<span class="pill">{{this}}</span>{{/each}}
+      <div class="identity-contact">
+        {{#if email}}<a href="mailto:{{email}}">{{email}}</a>{{/if}}
+        {{#if phone}}<span>{{phone}}</span>{{/if}}
+        {{#if location}}<span>{{location}}</span>{{/if}}
+        {{#if linkedin}}<a href="https://{{linkedin}}" target="_blank" rel="noopener">LinkedIn</a>{{/if}}
+        {{#if website}}<a href="{{website}}" target="_blank" rel="noopener">Website</a>{{/if}}
       </div>
     </div>
-    {{/if}}
 
-    {{#if (hasItems experience)}}
-    <!-- Experience card -->
-    <div class="card card-experience">
-      <h2 class="card-title">Experience</h2>
-      {{#each experience}}
+    {{#each activeSections}}
+    <div class="card {{#if (eq this.type 'list')}}card-list{{/if}} {{#if (eq this.type 'text')}}card-text{{/if}} {{#if (eq this.type 'experience')}}card-wide{{/if}} {{#if (eq this.type 'education')}}card-wide{{/if}} {{#if (eq this.type 'entries')}}card-wide{{/if}}">
+      <h2 class="card-title">{{this.title}}</h2>
+
+      {{#if (eq this.type "text")}}
+      <p class="card-body-text">{{this.textContent}}</p>
+      {{/if}}
+
+      {{#if (eq this.type "list")}}
+      <div class="skill-pills">
+        {{#each this.listItems}}<span class="pill">{{this}}</span>{{/each}}
+      </div>
+      {{/if}}
+
+      {{#if (eq this.type "experience")}}
+      {{#each this.entries}}
       <div class="exp-item">
         <div class="exp-top">
           <div>
-            <div class="exp-title">{{title}}</div>
-            <div class="exp-company">{{company}}</div>
+            <div class="exp-title">{{this.heading}}</div>
+            {{#if this.subheading}}<div class="exp-company">{{this.subheading}}</div>{{/if}}
           </div>
-          <span class="exp-date">{{dateRange startDate endDate}}</span>
+          {{#if this.date}}<span class="exp-date">{{this.date}}</span>{{/if}}
         </div>
-        {{#if (hasItems bullets)}}
+        {{#if (hasItems this.bullets)}}
         <ul class="exp-bullets">
-          {{#each bullets}}<li>{{this}}</li>{{/each}}
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
         </ul>
         {{/if}}
       </div>
       {{/each}}
-    </div>
-    {{/if}}
+      {{/if}}
 
-    {{#if (hasItems education)}}
-    <!-- Education card -->
-    <div class="card card-education">
-      <h2 class="card-title">Education</h2>
-      {{#each education}}
+      {{#if (eq this.type "education")}}
+      {{#each this.entries}}
       <div class="edu-item">
         <div class="edu-top">
-          <div class="edu-inst">{{institution}}</div>
-          {{#if startDate}}<span class="edu-date">{{dateRange startDate endDate}}</span>{{/if}}
+          <div class="edu-inst">{{this.heading}}</div>
+          {{#if this.date}}<span class="edu-date">{{this.date}}</span>{{/if}}
         </div>
-        {{#if degree}}<div class="edu-degree">{{degree}}{{#if field}} in {{field}}{{/if}}</div>{{/if}}
-        {{#if gpa}}<div class="edu-gpa">GPA: {{gpa}}</div>{{/if}}
+        {{#if this.subheading}}<div class="edu-degree">{{this.subheading}}</div>{{/if}}
+        {{#if (hasItems this.bullets)}}
+        <ul class="exp-bullets">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
       </div>
       {{/each}}
+      {{/if}}
+
+      {{#if (eq this.type "entries")}}
+      {{#each this.entries}}
+      <div class="exp-item">
+        <div class="exp-top">
+          <div>
+            <div class="exp-title">{{this.heading}}</div>
+            {{#if this.subheading}}<div class="exp-company">{{this.subheading}}</div>{{/if}}
+          </div>
+          {{#if this.date}}<span class="exp-date">{{this.date}}</span>{{/if}}
+        </div>
+        {{#if (hasItems this.bullets)}}
+        <ul class="exp-bullets">
+          {{#each this.bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
+      </div>
+      {{/each}}
+      {{/if}}
+
     </div>
-    {{/if}}
+    {{/each}}
 
   </div>
 </body>

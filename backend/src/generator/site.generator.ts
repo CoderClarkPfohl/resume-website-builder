@@ -91,11 +91,17 @@ function buildFontLink(config: TemplateConfig): string {
   return `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${family}:wght@400;600;700&display=swap">`;
 }
 
+const HEX_COLOR_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 /** Build a <style> block from user config that overrides template defaults. */
 function buildConfigCss(config: TemplateConfig): string {
   const parts: string[] = [];
 
-  if (config.accentColor) {
+  if (config.accentColor && HEX_COLOR_RE.test(config.accentColor)) {
     const c = config.accentColor;
     parts.push(
       `:root { --accent: ${c}; }`,
@@ -148,6 +154,15 @@ export function renderTemplate(
   // Inline CSS so the HTML is self-contained (preview iframe, srcdoc, blob URL)
   html = html.replace(/<link[^>]+href="style\.css"[^>]*\/?>/i, `<style>\n${css}\n</style>`);
 
+  // Inject meta/OG tags for SEO and link previews
+  const metaTags = [
+    `<meta name="description" content="${escapeHtml(parsed.summary || `${parsed.name}'s resume website`)}" />`,
+    `<meta property="og:title" content="${escapeHtml(parsed.name)} — Resume" />`,
+    `<meta property="og:description" content="${escapeHtml(parsed.summary || `${parsed.name}'s resume website`)}" />`,
+    `<meta property="og:type" content="profile" />`,
+  ].join('\n  ');
+  html = html.replace('</head>', `  ${metaTags}\n</head>`);
+
   const fontLink = buildFontLink(config);
   const configCss = buildConfigCss(config);
   if (fontLink) html = html.replace('</head>', `${fontLink}\n</head>`);
@@ -162,30 +177,8 @@ export async function generateSite(
   enabledSections: string[] = [],
   config: TemplateConfig = {}
 ): Promise<GenerateResponse> {
-  const visitorCount = Math.floor(Math.random() * 90000) + 10000;
-  const cssPath = path.join(TEMPLATES_DIR, templateId, 'style.css');
-  const css = fs.readFileSync(cssPath, 'utf-8');
-
-  const allSections = parsed.sections || {};
-  const activeSections: GenericSection[] = enabledSections
-    .map((key) => allSections[key])
-    .filter(Boolean)
-    .sort((a, b) => (SECTION_IMPORTANCE[a.key] ?? 500) - (SECTION_IMPORTANCE[b.key] ?? 500));
-
-  const hbsSource = fs.readFileSync(path.join(TEMPLATES_DIR, templateId, 'index.hbs'), 'utf-8');
-  const template = Handlebars.compile(hbsSource);
-  let html = template({
-    ...parsed,
-    css,
-    visitorCount,
-    activeSections,
-    enabledSections,
-  });
-
-  const fontLink = buildFontLink(config);
-  const configCss = buildConfigCss(config);
-  if (fontLink) html = html.replace('</head>', `${fontLink}\n</head>`);
-  if (configCss) html = html.replace('</head>', `<style>\n${configCss}\n</style>\n</head>`);
+  const html = renderTemplate(parsed, templateId, enabledSections, config);
+  const css = fs.readFileSync(path.join(TEMPLATES_DIR, templateId, 'style.css'), 'utf-8');
 
   const siteId = uuidv4();
   const siteDir = path.join(SITES_DIR, siteId);

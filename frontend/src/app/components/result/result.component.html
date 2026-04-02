@@ -1,13 +1,20 @@
 <div class="result">
-  <div class="success-icon">🎉</div>
+  <div class="success-icon">&#127881;</div>
   <h2 class="result-title">Your Resume Site is Ready!</h2>
-  <p class="result-subtitle">Share the link below or preview it in the frame.</p>
 
-  <div class="url-row">
-    <a class="site-url" [href]="siteUrl" target="_blank" rel="noopener">{{ siteUrl }}</a>
-    <button class="btn-copy" (click)="copyUrl()" type="button">
-      {{ copied ? '✓ Copied' : 'Copy' }}
-    </button>
+  @if (isLocalUrl) {
+    <p class="result-subtitle">Download your site as a ZIP, or deploy it to get a shareable link.</p>
+  } @else {
+    <p class="result-subtitle">Share the link below or preview it in the frame.</p>
+    <div class="url-row">
+      <a class="site-url" [href]="siteUrl" target="_blank" rel="noopener">{{ siteUrl }}</a>
+      <button class="btn-copy" (click)="copyUrl()" type="button">
+        {{ copied ? '&#10003; Copied' : 'Copy' }}
+      </button>
+    </div>
+  }
+
+  <div class="primary-actions">
     <a class="btn-download" [href]="downloadUrl" download="resume-site.zip">
       Download ZIP
     </a>
@@ -20,7 +27,7 @@
         <span class="dot"></span>
         <span class="dot"></span>
       </div>
-      <div class="browser-address">{{ siteUrl }}</div>
+      <div class="browser-address">{{ isLocalUrl ? 'your-resume-site.netlify.app' : siteUrl }}</div>
     </div>
     <div class="preview-frame-wrapper">
       <iframe
@@ -32,38 +39,46 @@
     </div>
   </div>
 
-  <!-- Deploy section -->
+  <!-- Deploy section — clearly optional -->
   <div class="deploy-section">
     @if (!repoUrl) {
-      <h3 class="deploy-title">Deploy to the Web</h3>
-      <p class="deploy-subtitle">Create a GitHub repo and deploy to Netlify in one click.</p>
-      <div class="deploy-form">
-        <input
-          type="text"
-          class="deploy-input"
-          placeholder="repo-name (e.g. my-resume)"
-          [(ngModel)]="repoName"
-          [disabled]="deploying"
-        />
-        <button
-          class="btn-deploy"
-          (click)="deploy()"
-          [disabled]="!repoName.trim() || deploying"
-          type="button"
-        >
-          @if (deploying) {
-            <span class="spinner"></span> Deploying…
-          } @else {
-            🚀 Deploy
+      <button class="deploy-toggle" (click)="deployExpanded = !deployExpanded" type="button">
+        <h3 class="deploy-title">&#128640; Deploy to the Web</h3>
+        <span class="deploy-chevron" [class.expanded]="deployExpanded">&#9662;</span>
+      </button>
+
+      @if (deployExpanded) {
+        <div class="deploy-body">
+          <p class="deploy-subtitle">Create a GitHub repo and deploy to Netlify. Requires server-side GITHUB_TOKEN and NETLIFY_TOKEN.</p>
+          <div class="deploy-form">
+            <input
+              type="text"
+              class="deploy-input"
+              placeholder="repo-name (e.g. my-resume)"
+              [(ngModel)]="repoName"
+              [disabled]="deploying"
+            />
+            <button
+              class="btn-deploy"
+              (click)="deploy()"
+              [disabled]="!repoName.trim() || deploying"
+              type="button"
+            >
+              @if (deploying) {
+                <span class="spinner"></span> Deploying&hellip;
+              } @else {
+                Deploy
+              }
+            </button>
+          </div>
+          @if (deployError) {
+            <p class="deploy-error">{{ deployError }}</p>
           }
-        </button>
-      </div>
-      @if (deployError) {
-        <p class="deploy-error">{{ deployError }}</p>
+        </div>
       }
     } @else {
       <div class="deploy-success">
-        <h3 class="deploy-title">🎉 Deployed!</h3>
+        <h3 class="deploy-title">&#127881; Deployed!</h3>
         <div class="deploy-links">
           @if (repoUrl) {
             <div class="deploy-link-row">
@@ -84,10 +99,15 @@
 
   <div class="result-actions">
     <button class="btn-change-template" (click)="changeTemplate.emit()" type="button">
-      ← Change Template
+      &larr; Change Template
     </button>
-    <button class="btn-restart" (click)="startOver.emit()" type="button">
-      ↺ Upload Another Resume
+    <button
+      class="btn-restart"
+      [class.btn-restart-confirm]="confirmingReset"
+      (click)="confirmReset()"
+      type="button"
+    >
+      {{ confirmingReset ? 'Are you sure? Click again.' : '&#8634; Upload Another Resume' }}
     </button>
   </div>
 </div>

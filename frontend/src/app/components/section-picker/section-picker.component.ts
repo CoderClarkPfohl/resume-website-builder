@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GenericSection } from '../../models/resume.model';
-import { SECTION_CATALOG } from '../sections';
+import { SECTION_CATALOG, createEmptySection } from '../sections';
 
 @Component({
   selector: 'app-section-picker',
@@ -53,6 +53,13 @@ export class SectionPickerComponent implements OnInit {
     } else {
       this.enabledKeys.add(key);
       this.orderedKeys.push(key);
+
+      // If section wasn't detected by the parser, create an empty stub
+      // so the editor and generator have something to work with.
+      if (!(key in this.detectedSections)) {
+        const label = this.getLabelForKey(key);
+        this.detectedSections[key] = createEmptySection(key, label);
+      }
     }
   }
 

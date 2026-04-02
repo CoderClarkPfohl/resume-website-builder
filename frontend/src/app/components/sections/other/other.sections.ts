@@ -54,6 +54,12 @@ export class PerformancesSection extends SectionDefinition {
   readonly category = 'Other';
 }
 
+export class OtherMiscSection extends SectionDefinition {
+  readonly key = 'other';
+  readonly label = 'Other / Miscellaneous';
+  readonly category = 'Other';
+}
+
 export const OTHER_GROUP: SectionGroup = {
   category: 'Other',
   items: [
@@ -66,5 +72,6 @@ export const OTHER_GROUP: SectionGroup = {
     new ReferencesSection(),
     new ExhibitionsSection(),
     new PerformancesSection(),
+    new OtherMiscSection(),
   ],
 };

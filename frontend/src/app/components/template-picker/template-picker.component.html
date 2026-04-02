@@ -18,7 +18,7 @@
           <span class="template-desc">{{ tmpl.description }}</span>
         </div>
         @if (selectedId === tmpl.id) {
-          <span class="check-badge">✓</span>
+          <span class="check-badge">&#10003;</span>
         }
       </button>
     }
@@ -68,13 +68,13 @@
         <button
           class="density-btn"
           [class.active]="config.density !== 'compact'"
-          (click)="config.density = 'normal'"
+          (click)="setDensity('normal')"
           type="button"
         >Normal</button>
         <button
           class="density-btn"
           [class.active]="config.density === 'compact'"
-          (click)="config.density = 'compact'"
+          (click)="setDensity('compact')"
           type="button"
         >Compact</button>
       </div>
@@ -82,7 +82,7 @@
   </div>
 
   <div class="picker-actions">
-    <button class="btn-back" (click)="back.emit()" type="button">← Back to Editor</button>
+    <button class="btn-back" (click)="back.emit()" type="button">&larr; Back to Editor</button>
     <button
       class="btn-generate"
       [disabled]="!selectedId || loading"
@@ -90,9 +90,9 @@
       type="button"
     >
     @if (loading) {
-      <span class="spinner"></span> Generating…
+      <span class="spinner"></span> Generating&hellip;
     } @else {
-      Generate My Site →
+      Generate My Site &rarr;
     }
   </button>
   </div>
@@ -113,14 +113,20 @@
         <span class="drawer-tmpl-desc">{{ previewTemplate.description }}</span>
       }
     </div>
-    <button class="btn-drawer-close" (click)="closeDrawer()" type="button" aria-label="Close preview">✕</button>
+    <button class="btn-drawer-close" (click)="closeDrawer()" type="button" aria-label="Close preview">&times;</button>
   </div>
+
+  @if (previewError) {
+    <div class="preview-error-banner">
+      Preview is using sample data &mdash; your resume couldn't be rendered.
+    </div>
+  }
 
   <div class="drawer-iframe-wrap">
     @if (previewLoading) {
       <div class="preview-spinner-wrap">
         <div class="preview-spinner"></div>
-        <span>Loading preview…</span>
+        <span>Loading preview&hellip;</span>
       </div>
     }
     @if (drawerOpen && !previewLoading) {
@@ -129,7 +135,6 @@
         [src]="previewUrl"
         title="Template preview"
         sandbox="allow-same-origin allow-scripts"
-        loading="lazy"
       ></iframe>
     }
   </div>

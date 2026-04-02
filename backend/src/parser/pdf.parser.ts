@@ -134,8 +134,14 @@ function joinLineItems(items: TextItem[]): string {
     const prevEnd = items[i - 1].transform[4] + items[i - 1].width;
     const curStart = items[i].transform[4];
     const gap = curStart - prevEnd;
-    // If gap is larger than ~1 character width, add a space
-    if (gap > items[i].height * 0.3) {
+
+    // Use the smaller of two heuristics to avoid missing word spaces:
+    // 1) A fraction of font height (catches most normal word gaps)
+    // 2) A fraction of average character width (adapts to font size)
+    const avgCharWidth = items[i].width / Math.max(items[i].str.length, 1);
+    const threshold = Math.min(items[i].height * 0.15, avgCharWidth * 0.4);
+
+    if (gap > threshold) {
       result += ' ';
     }
     result += items[i].str;
@@ -143,16 +149,62 @@ function joinLineItems(items: TextItem[]): string {
   return result.trim();
 }
 
+/**
+ * Post-process extracted text to fix common PDF artifacts:
+ * - Missing spaces between concatenated words (e.g. "SoftwareEngineering" → "Software Engineering")
+ * - Missing spaces between text and numbers (e.g. "Clark812" → "Clark 812")
+ * - Collapsed all-caps section headers (e.g. "SKILLSANDQUALIFICATIONS" → "SKILLS AND QUALIFICATIONS")
+ */
+function normalizeExtractedText(text: string): string {
+  return text
+    .split('\n')
+    .map((line) => {
+      let result = line;
+
+      // Skip lines that are likely URLs — normalization would break them
+      if (/https?:\/\/|linkedin\.com|github\.com|\.com\/|\.org\/|\.io\//i.test(result)) {
+        return result;
+      }
+
+      // Insert space between a lowercase letter and an uppercase letter ("SoftwareEngineering")
+      result = result.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+      // Insert space between a letter and a digit when likely a word boundary ("Clark812", "GPA3.60")
+      // But not inside version numbers, dates, or known patterns like "C#", "C++"
+      result = result.replace(/([a-zA-Z])(\d)/g, (match, letter, digit, offset) => {
+        // Don't split inside common patterns: GPA followed by number, or single letter + digit
+        const before = result.slice(Math.max(0, offset - 3), offset + 1);
+        if (/GPA$/i.test(before)) return match; // "GPA3.60" → keep, will be caught by GPA regex
+        return `${letter} ${digit}`;
+      });
+
+      // Insert space between a digit and a letter ("6067clark" → "6067 clark")
+      result = result.replace(/(\d)([a-zA-Z])/g, '$1 $2');
+
+      // Fix collapsed all-caps words: "SKILLSANDQUALIFICATIONS" → "SKILLS AND QUALIFICATIONS"
+      // Only for lines that are entirely uppercase and longer than typical words
+      if (/^[A-Z\s&/(),.-]+$/.test(result.trim()) && result.trim().length > 15) {
+        // Try to split known conjunctions: AND, OF, FOR, IN
+        result = result.replace(/([A-Z]{2,})(AND|FOR|THE|OF|IN)([A-Z]{2,})/g, '$1 $2 $3');
+      }
+
+      return result;
+    })
+    .join('\n');
+}
+
 export async function extractPdfText(buffer: Buffer): Promise<string> {
   const result = await pdfParse(buffer, {
     pagerender: renderPage,
   });
 
-  const text = result.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  let text = result.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   if (text.trim().length < 100) {
     throw new Error(
       'Could not extract enough text from the PDF. The file may be scanned or image-based.'
     );
   }
+
+  text = normalizeExtractedText(text);
   return text;
 }

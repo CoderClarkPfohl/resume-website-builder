@@ -35,12 +35,20 @@ export class ResultComponent {
   deployError = '';
   repoUrl = '';
   netlifyUrl = '';
+  confirmingReset = false;
+  deployExpanded = false;
+
+  /** True when the siteUrl points to localhost — not a real shareable link */
+  get isLocalUrl(): boolean {
+    return this._siteUrl.includes('localhost') || this._siteUrl.includes('127.0.0.1');
+  }
 
   get downloadUrl(): string {
     return this.resumeService.getDownloadUrl(this.siteId);
   }
 
   copyUrl() {
+    if (this.isLocalUrl) return;
     navigator.clipboard.writeText(this.siteUrl).then(() => {
       this.copied = true;
       setTimeout(() => (this.copied = false), 2000);
@@ -64,5 +72,14 @@ export class ResultComponent {
         this.deploying = false;
       },
     });
+  }
+
+  confirmReset() {
+    if (this.confirmingReset) {
+      this.startOver.emit();
+    } else {
+      this.confirmingReset = true;
+      setTimeout(() => (this.confirmingReset = false), 3000);
+    }
   }
 }

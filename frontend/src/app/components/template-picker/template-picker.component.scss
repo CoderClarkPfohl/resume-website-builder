@@ -35,7 +35,12 @@
   overflow: hidden;
 
   &:hover { border-color: #4299e1; box-shadow: 0 4px 16px rgba(66, 153, 225, 0.15); }
-  &.selected { border-color: #4299e1; box-shadow: 0 4px 20px rgba(66, 153, 225, 0.3); }
+  &.selected {
+    border-color: #4299e1;
+    border-width: 3px;
+    box-shadow: 0 4px 20px rgba(66, 153, 225, 0.3);
+    background: #eff6ff;
+  }
 }
 
 .template-preview {
@@ -460,7 +465,11 @@
   gap: 8px;
 
   &:hover:not(:disabled) { background: #3182ce; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #94a3b8;
+  }
 }
 
 .spinner {
@@ -587,32 +596,26 @@
   overflow: hidden;
   background: #f3f4f6;
   position: relative;
-
-  &::after {
-    content: 'Loading preview…';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: #9ca3af;
-    z-index: 0;
-    pointer-events: none;
-  }
 }
 
 .preview-iframe {
-  width: 100%;
-  height: 100%;
   border: none;
   position: relative;
   z-index: 1;
-  // Scale down to show more of the page at once
+  // Scale down to show more of the page at once.
+  // Use transform + inverse dimensions so the container doesn't overflow.
   transform-origin: top left;
-  transform: scale(0.6);
-  width: calc(100% / 0.6);
-  height: calc(100% / 0.6);
+  transform: scale(0.55);
+  width: calc(100% / 0.55);
+  height: calc(100% / 0.55);
+}
+
+@media (max-width: 640px) {
+  .preview-iframe {
+    transform: scale(0.4);
+    width: calc(100% / 0.4);
+    height: calc(100% / 0.4);
+  }
 }
 
 /* ---- Drawer footer ---- */
@@ -635,4 +638,56 @@
   transition: background 0.2s;
 
   &:hover { background: #3182ce; }
+}
+
+/* ---- Preview error banner ---- */
+.preview-error-banner {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.8rem;
+  padding: 8px 20px;
+  border-bottom: 1px solid #fde68a;
+  flex-shrink: 0;
+}
+
+/* ---- Mobile overrides ---- */
+@media (max-width: 640px) {
+  .preview-drawer {
+    width: 100vw;
+  }
+
+  .config-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .config-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .accent-swatches {
+    flex-wrap: wrap;
+  }
+
+  .template-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    padding: 0 8px;
+  }
+
+  .picker-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .picker-actions .btn-back,
+  .picker-actions .btn-generate {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
 }

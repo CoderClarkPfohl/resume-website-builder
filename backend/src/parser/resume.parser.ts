@@ -16,8 +16,15 @@ import {
   extractGpa,
 } from './field.extractor';
 
-const BULLET_RE = /^[•\-\*\u2022\u25CF\u25AA\u2013>]\s+/;
-const DEGREE_RE = /\b(B\.?S\.?|B\.?A\.?|B\.?E\.?|M\.?S\.?|M\.?A\.?|M\.?B\.?A\.?|Ph\.?D\.?|Bachelor(?:'s)?|Master(?:'s)?|Doctor(?:ate)?|Associate(?:'s)?|A\.?A\.?|A\.?S\.?)\b/i;
+const BULLET_RE = /^[•\-\*\u2022\u25CF\u25AA\u2013>]\s+|^\d{1,2}[.)]\s+|^\([a-z]\)\s+/;
+// Strip any leading bullet/dash chars (with or without trailing space) — used to clean title fields
+const LEADING_BULLET_RE = /^[•\*\u2022\u25CF\u25AA\u2013\u2014>]+\s*|^-+\s+/;
+const DEGREE_RE = /\b(B\.?S\.?|B\.?A\.?|B\.?E\.?|B\.?F\.?A\.?|B\.?B\.?A\.?|B\.?Sc\.?|B\.?Tech\.?|M\.?S\.?|M\.?A\.?|M\.?B\.?A\.?|M\.?F\.?A\.?|M\.?Ed\.?|M\.?Sc\.?|M\.?Tech\.?|M\.?P\.?H\.?|Ph\.?D\.?|Ed\.?D\.?|J\.?D\.?|M\.?D\.?|D\.?O\.?|D\.?D\.?S\.?|D\.?M\.?D\.?|Pharm\.?D\.?|Bachelor(?:'s)?|Master(?:'s)?|Doctor(?:ate)?|Associate(?:'s)?|A\.?A\.?|A\.?S\.?|Diploma|Certificate)\b/i;
+
+function normalizeDate(d: string): string {
+  // Insert a space between a month name and a year if the PDF concatenated them (e.g. "December2021")
+  return d.replace(/([A-Za-z]+)(\d{4})/, '$1 $2');
+}
 
 function isBullet(line: string): boolean {
   return BULLET_RE.test(line) || /^\s{2,}/.test(line);
@@ -68,10 +75,10 @@ function parseExperience(lines: string[]): WorkExperience[] {
     if (dateRangeMatch) {
       commitJob();
 
-      const startDate = dateRangeMatch[1].trim();
-      const endDate = dateRangeMatch[2].trim();
-      const lineWithoutDate = line.replace(DATE_RANGE_RE, '').trim();
-      const context = [...pendingLines.slice(-2), lineWithoutDate].filter(Boolean).join(' | ');
+      const startDate = normalizeDate(dateRangeMatch[1].trim());
+      const endDate = normalizeDate(dateRangeMatch[2].trim());
+      const lineWithoutDate = line.replace(DATE_RANGE_RE, '').replace(LEADING_BULLET_RE, '').trim();
+      const context = [...pendingLines.slice(-2).map(l => l.replace(LEADING_BULLET_RE, '').trim()), lineWithoutDate].filter(Boolean).join(' | ');
       pendingLines = [];
 
       const { title, company } = context
@@ -120,7 +127,7 @@ function parseEducation(lines: string[]): Education[] {
     current = null;
   }
 
-  const INSTITUTION_RE = /university|college|institute|school|academy/i;
+  const INSTITUTION_RE = /university|college|institute|school|academy|polytechnic|conservatory|seminary|program/i;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -137,8 +144,8 @@ function parseEducation(lines: string[]): Education[] {
         if (dateMatch) {
           const rangeMatch = trimmed.match(DATE_RANGE_RE);
           if (rangeMatch) {
-            current.startDate = rangeMatch[1];
-            current.endDate = rangeMatch[2];
+            current.startDate = normalizeDate(rangeMatch[1]);
+            current.endDate = normalizeDate(rangeMatch[2]);
           }
         }
         continue;
@@ -152,8 +159,8 @@ function parseEducation(lines: string[]): Education[] {
         if (dateMatch) {
           const rangeMatch = trimmed.match(DATE_RANGE_RE);
           if (rangeMatch) {
-            current.startDate = rangeMatch[1];
-            current.endDate = rangeMatch[2];
+            current.startDate = normalizeDate(rangeMatch[1]);
+            current.endDate = normalizeDate(rangeMatch[2]);
           }
         }
       } else {
@@ -161,8 +168,8 @@ function parseEducation(lines: string[]): Education[] {
         if (dateMatch) {
           const rangeMatch = trimmed.match(DATE_RANGE_RE);
           if (rangeMatch) {
-            current.startDate = rangeMatch[1];
-            current.endDate = rangeMatch[2];
+            current.startDate = normalizeDate(rangeMatch[1]);
+            current.endDate = normalizeDate(rangeMatch[2]);
           }
         }
       }
@@ -188,9 +195,13 @@ function parseEducation(lines: string[]): Education[] {
 }
 
 function parseSkills(lines: string[]): string[] {
-  const raw = lines.join(', ');
+  // Strip leading bullet chars from each line, then join
+  const cleaned = lines.map((l) => l.replace(BULLET_RE, '').trim());
+  const raw = cleaned.join(', ');
+  // Split on commas, semicolons, pipes, and bullet chars — but NOT hyphens or asterisks
+  // (would destroy "problem-solving", "self-motivated", "C++", etc.)
   return raw
-    .split(/[,;|\n•\-\*\u2022]/)
+    .split(/[,;|\n•\u2022\u25CF\u25AA]/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0 && s.length <= 50);
 }
@@ -224,15 +235,15 @@ function parseGenericEntries(lines: string[]): GenericEntry[] {
 
     if (dateMatch) {
       commit();
-      const lineWithoutDate = line.replace(DATE_RANGE_RE, '').trim();
-      const context = [...pendingLines.slice(-2), lineWithoutDate].filter(Boolean).join(' — ');
+      const lineWithoutDate = line.replace(DATE_RANGE_RE, '').replace(LEADING_BULLET_RE, '').trim();
+      const context = [...pendingLines.slice(-2).map(l => l.replace(LEADING_BULLET_RE, '').trim()), lineWithoutDate].filter(Boolean).join(' — ');
       pendingLines = [];
 
       const { title, company } = splitTitleCompany(context || lineWithoutDate);
       current = {
         heading: title || company,
         subheading: company && title ? company : undefined,
-        date: `${dateMatch[1].trim()} – ${dateMatch[2].trim()}`,
+        date: `${normalizeDate(dateMatch[1].trim())} – ${normalizeDate(dateMatch[2].trim())}`,
         bullets: [],
       };
       continue;
@@ -292,9 +303,10 @@ function parseGenericEntries(lines: string[]): GenericEntry[] {
 }
 
 function parseListItems(lines: string[]): string[] {
-  const raw = lines.join(', ');
+  const cleaned = lines.map((l) => l.replace(BULLET_RE, '').trim());
+  const raw = cleaned.join(', ');
   return raw
-    .split(/[,;|\n•\-\*\u2022]/)
+    .split(/[,;|\n•\u2022\u25CF\u25AA]/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0 && s.length <= 80);
 }

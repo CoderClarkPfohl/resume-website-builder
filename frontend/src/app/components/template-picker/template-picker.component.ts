@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TemplateMetadata, TemplateConfig, ParsedResume } from '../../models/resume.model';
 import { ResumeService } from '../../services/resume.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-template-picker',
@@ -55,7 +56,10 @@ export class TemplatePickerComponent implements OnInit, OnDestroy {
   previewId: string | null = null;
   drawerOpen = false;
   previewLoading = false;
+  previewError = false;
   private blobUrls: string[] = [];
+  private previewSub: Subscription | null = null;
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   previewUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
 
@@ -76,13 +80,18 @@ export class TemplatePickerComponent implements OnInit, OnDestroy {
   }
 
   openPreview(id: string) {
+    // Cancel any in-flight preview request
+    this.previewSub?.unsubscribe();
+
     this.previewId = id;
     this.drawerOpen = true;
     this.previewLoading = true;
+    this.previewError = false;
     this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
 
     if (this.parsedResume) {
-      this.resumeService.previewSite(this.parsedResume, id, this.enabledSections, this.config)
+      this.previewSub = this.resumeService
+        .previewSite(this.parsedResume, id, this.enabledSections, this.config)
         .subscribe({
           next: (html) => {
             const blob = new Blob([html], { type: 'text/html' });
@@ -92,8 +101,10 @@ export class TemplatePickerComponent implements OnInit, OnDestroy {
             this.previewLoading = false;
           },
           error: () => {
+            // Fallback to sample-data preview, but flag the error
             this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`/api/preview/${id}`);
             this.previewLoading = false;
+            this.previewError = true;
           },
         });
     } else {
@@ -103,11 +114,14 @@ export class TemplatePickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.previewSub?.unsubscribe();
+    if (this.refreshTimer) clearTimeout(this.refreshTimer);
     this.blobUrls.forEach(URL.revokeObjectURL);
   }
 
   closeDrawer() {
     this.drawerOpen = false;
+    this.previewError = false;
   }
 
   selectFromDrawer() {
@@ -122,10 +136,27 @@ export class TemplatePickerComponent implements OnInit, OnDestroy {
 
   setAccent(value: string) {
     this.config = { ...this.config, accentColor: value || undefined };
+    this.refreshPreviewDebounced();
   }
 
   setFont(value: string) {
     this.config = { ...this.config, fontFamily: value || undefined };
+    this.refreshPreviewDebounced();
+  }
+
+  setDensity(value: 'normal' | 'compact') {
+    this.config = { ...this.config, density: value };
+    this.refreshPreviewDebounced();
+  }
+
+  /** Debounce config-change previews to avoid spamming the server */
+  private refreshPreviewDebounced() {
+    if (this.refreshTimer) clearTimeout(this.refreshTimer);
+    this.refreshTimer = setTimeout(() => {
+      if (this.drawerOpen && this.previewId) {
+        this.openPreview(this.previewId);
+      }
+    }, 300);
   }
 
   generate() {

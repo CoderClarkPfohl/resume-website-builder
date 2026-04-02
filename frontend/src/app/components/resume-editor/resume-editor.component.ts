@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ParsedResume, GenericSection, GenericEntry } from '../../models/resume.model';
+import { createEmptySection, SECTION_CATALOG } from '../sections';
 
 @Component({
   selector: 'app-resume-editor',
@@ -21,15 +22,32 @@ export class ResumeEditorComponent implements OnInit {
   ngOnInit() {
     // Deep clone so edits don't mutate the original until confirmed
     this.draft = JSON.parse(JSON.stringify(this.parsedResume));
+    if (!this.draft.sections) this.draft.sections = {};
 
-    // Ensure optional fields are initialized for two-way binding
+    // Ensure every enabled section has a GenericSection object
     for (const key of this.enabledSections) {
-      const section = this.draft.sections?.[key];
-      if (!section) continue;
+      let section = this.draft.sections[key];
+
+      // Create stub for manually-added sections that the parser didn't detect
+      if (!section) {
+        const label = this.getLabelForCatalog(key);
+        section = createEmptySection(key, label);
+        this.draft.sections[key] = section;
+      }
+
       if (section.type === 'text' && section.textContent == null) section.textContent = '';
       if (section.type === 'list' && !section.listItems) section.listItems = [];
       if (['experience', 'education', 'entries'].includes(section.type) && !section.entries) section.entries = [];
     }
+  }
+
+  private getLabelForCatalog(key: string): string {
+    for (const group of SECTION_CATALOG) {
+      for (const item of group.items) {
+        if (item.key === key) return item.label;
+      }
+    }
+    return key;
   }
 
   // --- List helpers ---

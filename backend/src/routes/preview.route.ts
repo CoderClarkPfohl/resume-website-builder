@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { VALID_TEMPLATE_IDS, renderTemplate } from '../generator/site.generator';
+import { renderTemplate } from '../generator/site.generator';
 import { SAMPLE_RESUME, SAMPLE_SECTIONS } from '../generator/sample.data';
+import { isValidParsedResume, isValidTemplateId, sanitizeConfig, sendError } from './validate';
 
 const router = Router();
 
@@ -8,8 +9,8 @@ const router = Router();
 router.get('/preview/:templateId', (req: Request, res: Response): void => {
   const { templateId } = req.params;
 
-  if (!VALID_TEMPLATE_IDS.includes(templateId)) {
-    res.status(404).json({ error: 'Template not found.' });
+  if (!isValidTemplateId(templateId)) {
+    sendError(res, 404, 'Template not found.');
     return;
   }
 
@@ -19,31 +20,38 @@ router.get('/preview/:templateId', (req: Request, res: Response): void => {
     res.send(html);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to render preview.';
-    res.status(500).json({ error: message });
+    sendError(res, 500, message);
   }
 });
 
 // Live preview with the user's actual parsed resume data
 router.post('/preview', (req: Request, res: Response): void => {
-  const { parsed, templateId, enabledSections = [], config = {} } = req.body;
+  const { parsed, templateId, enabledSections = [], config: rawConfig = {} } = req.body;
 
-  if (!parsed || !templateId) {
-    res.status(400).json({ error: 'Missing parsed or templateId.' });
+  if (!isValidParsedResume(parsed)) {
+    sendError(res, 400, 'Invalid or missing parsed resume data.');
     return;
   }
 
-  if (!VALID_TEMPLATE_IDS.includes(templateId)) {
-    res.status(400).json({ error: 'Invalid templateId.' });
+  if (!isValidTemplateId(templateId)) {
+    sendError(res, 400, 'Invalid templateId.');
     return;
   }
+
+  if (!Array.isArray(enabledSections)) {
+    sendError(res, 400, 'enabledSections must be an array.');
+    return;
+  }
+
+  const config = sanitizeConfig(rawConfig);
 
   try {
-    const html = renderTemplate(parsed, templateId, enabledSections, config);
+    const html = renderTemplate(parsed as any, templateId, enabledSections, config);
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to render preview.';
-    res.status(500).json({ error: message });
+    sendError(res, 500, message);
   }
 });
 

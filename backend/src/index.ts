@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -11,8 +12,12 @@ import downloadRouter from './routes/download.route';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: 'http://localhost:4200', methods: ['GET', 'POST'] }));
-app.use(express.json({ limit: '10mb' }));
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:4200';
+app.use(cors({
+  origin: corsOrigin.split(',').map((o) => o.trim()),
+  methods: ['GET', 'POST'],
+}));
+app.use(express.json({ limit: '2mb' }));
 
 // API routes
 app.use('/api', uploadRouter);

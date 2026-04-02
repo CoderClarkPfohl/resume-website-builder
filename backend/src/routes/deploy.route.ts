@@ -15,6 +15,16 @@ router.post('/deploy', async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
+  if (!/^[\w-]+$/.test(siteId)) {
+    res.status(400).json({ error: 'Invalid siteId.' });
+    return;
+  }
+
+  if (!/^[\w-]+$/.test(repoName)) {
+    res.status(400).json({ error: 'Invalid repoName. Use only letters, numbers, hyphens, and underscores.' });
+    return;
+  }
+
   const ghToken = process.env.GITHUB_TOKEN;
   const netlifyToken = process.env.NETLIFY_TOKEN;
 
